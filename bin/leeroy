@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'dotenv'
+Dotenv.load
+
+if ENV['ENVIRONMENT'] == 'development'
+  require 'bundler/setup'
+end
+
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'leeroy/app'
+
+include Leeroy::App
+
+#  vim: set et fenc= ft=ruby ff=unix sts=2 sw=2 ts=2 : 
