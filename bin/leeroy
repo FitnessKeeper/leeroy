@@ -5,6 +5,7 @@ Dotenv.load
 
 if ENV['ENVIRONMENT'] == 'development'
   require 'bundler/setup'
+  require 'pry'
 end
 
 lib = File.expand_path('../lib', __FILE__)

@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'ap'
 require 'gli'
 
 require 'leeroy'
@@ -12,8 +13,15 @@ module Leeroy::App
 
   command :version do |c|
     c.desc 'Displays the version of leeroy and exits.'
-    c.action do|global_options,options,args|
+    c.action do |global_options,options,args|
       printf("leeroy %s\n", Leeroy::VERSION)
+    end
+  end
+
+  command :env do |c|
+    c.desc "Displays leeroy's environment settings."
+    c.action do |global_options,options,args|
+      ap Leeroy::Env.new
     end
   end
 

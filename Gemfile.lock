@@ -2,20 +2,27 @@ PATH
   remote: .
   specs:
     leeroy (0.0.1)
+      awesome_print (~> 1.6)
       dotenv (~> 2.0)
       gli (~> 2.13)
+      hashie (~> 3.4)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    awesome_print (1.6.1)
     coderay (1.1.0)
     dotenv (2.0.2)
     gli (2.13.4)
+    hashie (3.4.3)
     method_source (0.8.2)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
+    pry-awesome_print (9.6.10)
+      awesome_print (>= 1.1.0, < 999)
+      pry (>= 0.9.0, < 999)
     rake (10.4.2)
     slop (3.6.0)
 
@@ -26,6 +33,7 @@ DEPENDENCIES
   bundler (~> 1.6)
   leeroy!
   pry (~> 0.10)
+  pry-awesome_print (~> 9.6)
   rake (~> 10.0)
 
 BUNDLED WITH
