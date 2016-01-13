@@ -11,7 +11,7 @@ module Leeroy
       # set default region if not set
       if @env.AWS_REGION.nil?
         Aws.config.update({
-          region: 'us-west-2'
+          region: 'us-east-1'
         })
       end
 
