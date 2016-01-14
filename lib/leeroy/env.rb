@@ -11,12 +11,14 @@ module Leeroy
     include Hashie::Extensions::MethodQuery
     include Hashie::Extensions::IndifferentAccess
 
+    include Leeroy::Helpers::Env
+
     def initialize(env = ENV)
       super
     end
 
-    def to_s
-      Leeroy::Helpers::Env.to_s(self)
+    def to_s(obj)
+      _capture_stdout { ap obj }
     end
   end
 end

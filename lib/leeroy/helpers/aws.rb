@@ -1,21 +1,16 @@
 require 'aws-sdk'
 
 require 'leeroy/helpers'
+require 'leeroy/helpers/env'
 
 module Leeroy
   module Helpers
-    class AWS < Leeroy::Helpers::Base
+    module AWS
+      include Leeroy::Helpers
 
-      @env = Leeroy::Env.new
+      attr :s3
 
-      # set default region if not set
-      if @env.AWS_REGION.nil?
-        Aws.config.update({
-          region: 'us-east-1'
-        })
-      end
-
-      def self.S3
+      def initialize_s3
         Aws::S3::Client.new
       end
     end

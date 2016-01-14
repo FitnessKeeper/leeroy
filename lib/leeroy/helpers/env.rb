@@ -1,14 +1,23 @@
 require 'awesome_print'
 
+require 'leeroy/env'
 require 'leeroy/helpers'
 
 module Leeroy
   module Helpers
-    class Env < Leeroy::Helpers::Base
+    module Env
+      include Leeroy::Helpers
 
-      def to_s(obj)
-        _capture_stdout { ap obj }
+      attr :env
+
+      def initialize_env
+        begin
+          @env = Leeroy::Env.new
+        rescue StandardError => e
+          raise e
+        end
       end
+
     end
   end
 end
