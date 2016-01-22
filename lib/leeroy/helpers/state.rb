@@ -29,7 +29,7 @@ module Leeroy
       #   state.send(method.to_sym, *args, &blk)
       # end
 
-      def self.load(file)
+      def self.load_state(file)
         begin
           File.open(file, 'r') do |f|
             _from_json(f.gets)
@@ -39,7 +39,7 @@ module Leeroy
         end
       end
 
-      def save(state, file = statefile)
+      def self.save_state(state, file = statefile)
         begin
           File.new(file, 'w')
         rescue StandardError => e

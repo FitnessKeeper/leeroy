@@ -15,6 +15,7 @@ module Leeroy
 
       include Leeroy::Task
       include Leeroy::Helpers
+      include Leeroy::Helpers::Env
       include Leeroy::Helpers::State
 
       def initialize(params = {})
@@ -30,7 +31,7 @@ module Leeroy
           self.logger.debug("env: #{self.env.to_s}")
 
           self.logger.debug("setting state")
-          @state = Leeroy::Helpers::State.load(self.env.LEEROY_STATEFILE)
+          @state = self.load_state(self.env.LEEROY_STATEFILE)
           self.logger.debug("state: #{self.state.to_s}")
 
           self.logger.debug("initialization of #{self.class.to_s} complete")
