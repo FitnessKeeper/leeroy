@@ -6,8 +6,8 @@ require 'yell'
 module Leeroy
   module Task
     include Leeroy::Helpers
+    include Leeroy::Helpers::Env
     include Leeroy::Helpers::State
-    attr_reader :env
     attr_reader :params
 
     attr :state
