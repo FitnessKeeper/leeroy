@@ -30,4 +30,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "dotenv", "~> 2.0"
   spec.add_runtime_dependency "gli", "~> 2.13"
   spec.add_runtime_dependency "hashie", "~> 3.4"
+  spec.add_runtime_dependency "yell", "~> 2.0"
 end

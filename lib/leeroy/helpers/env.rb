@@ -8,15 +8,7 @@ module Leeroy
     module Env
       include Leeroy::Helpers
 
-      attr :env
-
-      def initialize_env
-        begin
-          @env = Leeroy::Env.new
-        rescue StandardError => e
-          raise e
-        end
-      end
+      attr_reader :env
 
     end
   end
