@@ -1,6 +1,7 @@
 require 'hashie'
 require 'json'
 
+require 'leeroy/hashiemash'
 require 'leeroy/helpers'
 
 module Leeroy
@@ -19,11 +20,7 @@ module Leeroy
         self.state.to_s
       end
 
-      class StateHash < Hash
-        include Hashie::Extensions::Coercion
-        include Hashie::Extensions::KeyConversion
-        include Hashie::Extensions::MethodAccess
-
+      class StateHash < Leeroy::HashieMash
         coerce_value Hash, StateHash
 
         def initialize(hash = {})

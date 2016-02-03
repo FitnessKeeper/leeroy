@@ -1,26 +1,35 @@
 require 'dotenv'
 Dotenv.load
 
-require 'hashie'
-require 'yell'
-
+require 'leeroy/hashiemash'
 require 'leeroy/helpers/env'
 
 module Leeroy
-  Yell.new :stderr, :name => 'Leeroy::Env'
 
-  class Env < Hashie::Mash
-    include Hashie::Extensions::MethodReader
-    include Hashie::Extensions::MethodQuery
-    include Hashie::Extensions::IndifferentAccess
-
-    include Yell::Loggable
+  class Env < Leeroy::HashieMash
+    Yell.new :stderr, :name => 'Leeroy::Env'
 
     include Leeroy::Helpers::Env
 
     def initialize(env = ENV)
-      self.logger.debug "initializing #{self.class.to_s}"
-      super
+      begin
+        self.logger.debug "initializing #{self.class}"
+        super(_filter_env(env))
+      rescue StandardError => e
+        raise e
+      end
+    end
+
+    private
+
+    def _filter_env(env, prefix = 'LEEROY_')
+      begin
+        logger.debug("filtering env by prefix '#{prefix}'")
+        env.select { |k,v| k.start_with?(prefix) }
+
+      rescue StandardError => e
+        raise e
+      end
     end
   end
 end
