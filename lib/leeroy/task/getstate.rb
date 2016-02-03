@@ -5,10 +5,6 @@ module Leeroy
     class GetState < Leeroy::Task::Base
       include Leeroy::Helpers::State
 
-      def initialise(*)
-        super
-      end
-
       def perform(params)
         super
         self.state

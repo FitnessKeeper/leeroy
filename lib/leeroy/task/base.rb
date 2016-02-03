@@ -18,23 +18,23 @@ module Leeroy
       include Leeroy::Helpers::Env
       include Leeroy::Helpers::State
 
-      def initialize(params = {})
+      def initialize(args = {})
         begin
-          self.logger.debug("initializing #{self.class.to_s}")
+          logger.debug("initializing #{self.class.to_s}")
 
-          self.logger.debug("setting params")
-          @params = params
-          self.logger.debug("params: #{self.params.to_s}")
+          logger.debug("setting params")
+          @params = args
+          logger.debug("params: #{self.params.to_s}")
 
-          self.logger.debug("setting env")
+          logger.debug("setting env")
           @env = Leeroy::Env.new
-          self.logger.debug("env: #{self.env.to_s}")
+          logger.debug("env: #{self.env.to_s}")
 
-          self.logger.debug("setting state")
-          @state = self.load_state(self.env.LEEROY_STATEFILE)
-          self.logger.debug("state: #{self.state.to_s}")
+          logger.debug("setting state")
+          @state = load_state(args.fetch(:state, {}))
+          logger.debug("state: #{self.state.to_s}")
 
-          self.logger.debug("initialization of #{self.class.to_s} complete")
+          logger.debug("initialization of #{self.class.to_s} complete")
         rescue StandardError => e
           raise e
         end

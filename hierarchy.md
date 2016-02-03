@@ -23,15 +23,10 @@ Leeroy::App::Command::State
 Leeroy::App::Command::Task
 Leeroy::App::Command::Version
 
-# maybe don't do any of these?  the State helper can just emit and consume strings of JSON
-Leeroy::Data
-Leeroy::Data::Backend
-Leeroy::Data::Backend::Base *
-Leeroy::Data::Backend::JSON *
-
 Leeroy::Helpers
 Leeroy::Helpers::AWS
 Leeroy::Helpers::Env
+Leeroy::Helpers::Polling
 Leeroy::Helpers::State
 
 Leeroy::Task
