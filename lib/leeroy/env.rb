@@ -4,16 +4,19 @@ Dotenv.load
 require 'leeroy/hashiemash'
 require 'leeroy/helpers/env'
 
+require 'yell'
+
 module Leeroy
+  Yell.new :stderr, :name => 'Leeroy::Env'
 
   class Env < Leeroy::HashieMash
-    Yell.new :stderr, :name => 'Leeroy::Env'
+    include Yell::Loggable
 
     include Leeroy::Helpers::Env
 
     def initialize(env = ENV)
       begin
-        self.logger.debug "initializing #{self.class}"
+        logger.debug "initializing #{self.class}"
         super(_filter_env(env))
       rescue StandardError => e
         raise e

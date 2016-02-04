@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "awesome_print", "~> 1.6"
   spec.add_runtime_dependency "aws-sdk", "~> 2"
   spec.add_runtime_dependency "dotenv", "~> 2.0"
+  spec.add_runtime_dependency "fire_poll", "~> 1.2"
   spec.add_runtime_dependency "gli", "~> 2.13"
   spec.add_runtime_dependency "hashie", "~> 3.4"
   spec.add_runtime_dependency "yell", "~> 2.0"

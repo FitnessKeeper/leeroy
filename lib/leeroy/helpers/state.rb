@@ -11,24 +11,27 @@ module Leeroy
 
       attr_accessor :state
 
-      def load_state(input)
-        logger.debug("loading state from '#{input}' (#{input.class})")
-        Leeroy::Helpers::State::StateHash.new(input)
+      def load_state
+        begin
+          logger.debug("loading state from stdin")
+          lines = []
+
+          while line = $stdin.gets do
+            line.chomp!
+            logger.debug "line: #{line}"
+            lines.push(line)
+            logger.debug "lines: #{lines.to_s}"
+          end
+
+          self.state = JSON.parse(lines.join)
+        rescue StandardError => e
+          raise e
+        end
       end
 
       def dump_state
-        self.state.to_s
-      end
-
-      class StateHash < Leeroy::HashieMash
-        coerce_value Hash, StateHash
-
-        def initialize(hash = {})
-          super
-          hash.each_pair do |k,v|
-            self[k] = v
-          end
-        end
+        logger.debug("dumping state to stdout")
+        $stdout.puts self.state.to_json
       end
     end
   end

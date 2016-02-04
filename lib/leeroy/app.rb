@@ -4,7 +4,7 @@ require 'ap'
 require 'gli'
 
 require 'leeroy'
-require 'leeroy/task/getstate'
+require 'leeroy/task/stub'
 
 include GLI::App
 
@@ -12,6 +12,10 @@ module Leeroy
   module App
 
     program_desc 'Automate tasks with Jenkins'
+
+    # global options
+    desc 'Use in a pipeline (read state from stdin)'
+    switch [:p, :pipe]
 
     command :version do |c|
       c.desc 'Displays the version of leeroy and exits.'
@@ -27,15 +31,11 @@ module Leeroy
       end
     end
 
-    command :get do |c|
-      c.desc "Gets one or more values from leeroy's state store."
+    command :stub do |c|
+      c.desc "Runs the stub task."
       c.action do |global_options,options,args|
-        begin
-          gs = Leeroy::Task::GetState.new(:params => {:args => args})
-          ap gs.perform()
-        rescue StandardError => e
-          raise e
-        end
+        task = Leeroy::Task::Stub.new(global_options: global_options, options: options, args: args)
+        task.perform
       end
     end
 

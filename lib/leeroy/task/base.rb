@@ -1,8 +1,8 @@
 require 'leeroy'
+require 'leeroy/env'
 require 'leeroy/helpers'
-require 'leeroy/helpers/state'
+require 'leeroy/state'
 
-require 'hashie'
 require 'yell'
 
 module Leeroy
@@ -18,20 +18,28 @@ module Leeroy
       include Leeroy::Helpers::Env
       include Leeroy::Helpers::State
 
-      def initialize(args = {})
+      def initialize(params = {})
         begin
           logger.debug("initializing #{self.class.to_s}")
 
-          logger.debug("setting params")
-          @params = args
-          logger.debug("params: #{self.params.to_s}")
+          logger.debug("setting global_options")
+          @global_options = params.fetch(:global_options, {})
+          logger.debug("global_options: #{self.global_options.to_s}")
+
+          logger.debug("setting options")
+          @options = params.fetch(:options, {})
+          logger.debug("options: #{self.options.to_s}")
+
+          logger.debug("setting args")
+          @args = params.fetch(:args, {})
+          logger.debug("args: #{self.args.to_s}")
 
           logger.debug("setting env")
-          @env = Leeroy::Env.new
+          @env = Leeroy::Env.new(params.fetch(:env, ENV))
           logger.debug("env: #{self.env.to_s}")
 
           logger.debug("setting state")
-          @state = load_state(args.fetch(:state, {}))
+          @state = Leeroy::State.new(params.fetch(:state, {}), global_options[:pipe])
           logger.debug("state: #{self.state.to_s}")
 
           logger.debug("initialization of #{self.class.to_s} complete")
@@ -40,10 +48,11 @@ module Leeroy
         end
       end
 
-      def perform(params = self.params)
+      def perform(args = self.args, options = self.options)
         begin
           self.logger.debug("performing #{self.class.to_s}")
-          self.logger.debug("params: #{params.inspect}")
+          self.logger.debug("args: #{args.inspect}")
+          self.logger.debug("options: #{options.inspect}")
         rescue StandardError => e
           raise e
         end
