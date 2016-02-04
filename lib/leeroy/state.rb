@@ -17,7 +17,7 @@ module Leeroy
 
         if pipe
           logger.debug "running in pipe mode"
-          state.merge(load_state)
+          state = state.merge(load_state)
         else
           logger.debug "not running in pipe mode"
         end

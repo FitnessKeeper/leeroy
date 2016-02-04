@@ -23,7 +23,10 @@ module Leeroy
             logger.debug "lines: #{lines.to_s}"
           end
 
-          self.state = JSON.parse(lines.join)
+          joined = lines.join
+          logger.debug "joined: #{joined}"
+
+          JSON.parse(joined)
         rescue StandardError => e
           raise e
         end
