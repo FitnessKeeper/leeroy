@@ -11,8 +11,19 @@ module Leeroy
         begin
           super(args, options, global_options)
 
+          # resolve VPC ID
           vpcname = self.env.LEEROY_BUILD_VPC
           vpcid = getVpcId(vpcname)
+          self.state.vpcid = vpcid
+
+          # resolve security group
+          sgname = self.env.LEEROY_BUILD_SECURITY_GROUP
+          sgid = getSgId(sgname, vpcname, vpcid)
+          self.state.sgid = sgid
+
+          dump_state
+
+          logger.debug "done performing for #{self.class}"
 
         rescue StandardError => e
           raise e

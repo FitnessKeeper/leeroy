@@ -62,6 +62,34 @@ module Leeroy
         end
       end
 
+      def getSgId(sgname, vpcname, vpcid, ec2 = self.ec2)
+        begin
+          logger.debug "getting SG ID for '#{sgname}'"
+
+          resp = ec2Request(:describe_security_groups, {:filters => [{name: 'vpc-id', values: [vpcid]}]})
+          security_groups = resp.security_groups
+
+          # now filter by sgname
+          sgmatcher = %r{#{vpcname}-#{sgname}-.*}
+          security_group = security_groups.select { |sg| sg.group_name =~ sgmatcher}
+          logger.debug "security_group: #{security_group.inspect}"
+
+          if security_group.length < 1
+            raise "No SG found with the name '#{sgname}'."
+          elsif security_group.length > 1
+            raise "Multiple SGs found with the name '#{sgname}'."
+          else
+            sgid = security_group[0].group_id
+          end
+
+          logger.debug "sgid: #{sgid}"
+          sgid
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
     end
   end
 end
