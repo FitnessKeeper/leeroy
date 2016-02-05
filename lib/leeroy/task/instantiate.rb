@@ -12,19 +12,23 @@ module Leeroy
           super(args, options, global_options)
 
           # resolve VPC ID
-          vpcname = self.env.LEEROY_BUILD_VPC
+          vpcname = checkEnv('LEEROY_BUILD_VPC')
           vpcid = getVpcId(vpcname)
           self.state.vpcid = vpcid
 
           # resolve security group
-          sgname = self.env.LEEROY_BUILD_SECURITY_GROUP
+          sgname = checkEnv('LEEROY_BUILD_SECURITY_GROUP')
           sgid = getSgId(sgname, vpcname, vpcid)
           self.state.sgid = sgid
 
           # resolve subnet
-          subnetname = self.env.LEEROY_BUILD_SUBNET
+          subnetname = checkEnv('LEEROY_BUILD_SUBNET')
           subnetid = getSubnetId(subnetname, vpcid)
           self.state.subnetid = subnetid
+
+          # create instance
+          instanceid = createInstance
+          self.state.instanceid = instanceid
 
           dump_state
 

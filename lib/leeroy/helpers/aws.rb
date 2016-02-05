@@ -1,4 +1,5 @@
 require 'aws-sdk'
+require 'uri'
 
 require 'leeroy/helpers'
 require 'leeroy/helpers/env'
@@ -20,6 +21,8 @@ module Leeroy
 
         logger.debug "AWS helpers initialized"
       end
+
+      # EC2
 
       def ec2Request(method, params = {}, ec2 = self.ec2, options = self.options, global_options = self.global_options)
         begin
@@ -108,6 +111,54 @@ module Leeroy
 
           logger.debug "subnetid: #{subnetid}"
           subnetid
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def createInstance(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+        begin
+          logger.debug "creating an EC2 instance"
+
+          # gather the necessary parameters
+          run_params = {}
+
+          run_params.store('security_group_ids', state.sgid)
+          run_params.store('subnet_id', state.subnetid)
+
+          run_params.store('image_id', checkEnv('LEEROY_AWS_LINUX_AMI'))
+          run_params.store('key_name', checkEnv('LEEROY_BUILD_SSH_KEYPAIR'))
+          run_params.store('instance_type', checkEnv('LEEROY_BUILD_INSTANCE_TYPE'))
+
+          run_params.store('iam_instance_profile', "Name=#{checkEnv('LEEROY_BUILD_PROFILE_NAME')}")
+
+          # user_data file depends on options
+          phase = options[:phase]
+          user_data = File.join(checkEnv('LEEROY_USER_DATA_PREFIX'), phase)
+          if File.readable?(user_data)
+            user_data_uri = URI.join('file://', user_data)
+            run_params.store('user_data', user_data_uri)
+          else
+            raise "You must provide a readable user data script at #{user_data}."
+          end
+
+          logger.debug "run_params: #{run_params.inspect}"
+
+
+          instanceid = 'DUMMY_INSTANCEID'
+
+          instanceid
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      # S3
+
+      def setSemaphore(key, payload = '', path = '')
+        begin
 
         rescue StandardError => e
           raise e

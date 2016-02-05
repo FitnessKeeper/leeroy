@@ -38,13 +38,13 @@ module Leeroy
     desc "Instantiates an EC2 instance for imaging."
     command :instantiate do |c|
 
-      valid_stage = ['gold_master','application']
-      c.desc "Stage of deploy process for which to deploy (must be one of #{valid_stage.sort})."
-      c.flag [:s, :stage], :must_match => valid_stage
+      valid_phase = ['gold_master','application']
+      c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
+      c.flag [:s, :phase], :must_match => valid_phase
 
       c.action do |global_options,options,args|
         # validate input
-        if options[:stage].nil?
+        if options[:phase].nil?
           help_now! "You must pass an argument for '--stage'."
         end
 
