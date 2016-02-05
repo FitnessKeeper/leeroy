@@ -42,13 +42,13 @@ module Leeroy
           @state = Leeroy::State.new(params.fetch(:state, {}), global_options[:pipe])
           logger.debug("state: #{self.state.to_s}")
 
-          logger.debug("initialization of #{self.class.to_s} complete")
+          logger.debug("base initialization of #{self.class.to_s} complete")
         rescue StandardError => e
           raise e
         end
       end
 
-      def perform(args = self.args, options = self.options)
+      def perform(args = self.args, options = self.options, global_options = self.global_options)
         begin
           self.logger.debug("performing #{self.class.to_s}")
           self.logger.debug("args: #{args.inspect}")

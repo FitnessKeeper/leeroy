@@ -4,8 +4,8 @@ module Leeroy
   module Task
     class Stub < Leeroy::Task::Base
 
-      def perform(params = {})
-        super(params)
+      def perform(args = self.args, options = self.options, global_options = self.global_options)
+        super(args, options, global_options)
 
         begin
           logger.debug "performing for #{self.class}"
