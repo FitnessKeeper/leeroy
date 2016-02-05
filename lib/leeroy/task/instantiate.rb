@@ -21,6 +21,11 @@ module Leeroy
           sgid = getSgId(sgname, vpcname, vpcid)
           self.state.sgid = sgid
 
+          # resolve subnet
+          subnetname = self.env.LEEROY_BUILD_SUBNET
+          subnetid = getSubnetId(subnetname, vpcid)
+          self.state.subnetid = subnetid
+
           dump_state
 
           logger.debug "done performing for #{self.class}"

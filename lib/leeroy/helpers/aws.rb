@@ -90,6 +90,30 @@ module Leeroy
         end
       end
 
+      def getSubnetId(subnetname, vpcid, ec2 = self.ec2)
+        begin
+          logger.debug "getting Subnet ID for '#{subnetname}'"
+
+          resp = ec2Request(:describe_subnets, {:filters => [{name: 'vpc-id', values: [vpcid]}, {name: 'tag:Name', values: [subnetname]}]})
+          subnets = resp.subnets
+          logger.debug "subnets: #{subnets.inspect}"
+
+          if subnets.length < 1
+            raise "No Subnet found with the name '#{subnetname}'."
+          elsif subnets.length > 1
+            raise "Multiple Subnets found with the name '#{subnetname}'."
+          else
+            subnetid = subnets[0].subnet_id
+          end
+
+          logger.debug "subnetid: #{subnetid}"
+          subnetid
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
     end
   end
 end
