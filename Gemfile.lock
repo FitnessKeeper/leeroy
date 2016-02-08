@@ -4,7 +4,7 @@ PATH
     leeroy (0.0.1)
       awesome_print (~> 1.6)
       aws-sdk (~> 2)
-      dotenv (~> 2.0)
+      dotenv (~> 2.1)
       fire_poll (~> 1.2)
       gli (~> 2.13)
       hashie (~> 3.4)

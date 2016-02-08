@@ -31,8 +31,6 @@ Leeroy::Helpers::State
 
 Leeroy::Task
 Leeroy::Task::Base *
-Leeroy::Task::GetState *
-Leeroy::Task::SetState *
 Leeroy::Task::RunInstance *
 Leeroy::Task::ImageInstance *
 Leeroy::Task::TerminateInstance *

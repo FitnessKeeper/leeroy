@@ -40,7 +40,7 @@ module Leeroy
 
       valid_phase = ['gold_master','application']
       c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
-      c.flag [:s, :phase], :must_match => valid_phase
+      c.flag [:p, :phase], :must_match => valid_phase
 
       c.action do |global_options,options,args|
         # validate input

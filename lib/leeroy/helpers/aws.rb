@@ -137,7 +137,7 @@ module Leeroy
           phase = options[:phase]
           user_data = File.join(checkEnv('LEEROY_USER_DATA_PREFIX'), phase)
           if File.readable?(user_data)
-            user_data_uri = URI.join('file://', user_data)
+            user_data_uri = URI.join('file:///', File.absolute_path(user_data))
             run_params.store('user_data', user_data_uri)
           else
             raise "You must provide a readable user data script at #{user_data}."
@@ -148,7 +148,17 @@ module Leeroy
 
           instanceid = 'DUMMY_INSTANCEID'
 
+          state.instanceid = instanceid
+
           instanceid
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def destroyInstance(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+        begin
 
         rescue StandardError => e
           raise e
