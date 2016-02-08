@@ -1,5 +1,4 @@
 require 'aws-sdk'
-require 'uri'
 
 require 'leeroy/helpers'
 require 'leeroy/helpers/env'
@@ -124,29 +123,34 @@ module Leeroy
           # gather the necessary parameters
           run_params = {}
 
-          run_params.store('security_group_ids', state.sgid)
-          run_params.store('subnet_id', state.subnetid)
+          run_params.store(:security_group_ids, Array(state.sgid))
+          run_params.store(:subnet_id, state.subnetid)
 
-          run_params.store('image_id', checkEnv('LEEROY_AWS_LINUX_AMI'))
-          run_params.store('key_name', checkEnv('LEEROY_BUILD_SSH_KEYPAIR'))
-          run_params.store('instance_type', checkEnv('LEEROY_BUILD_INSTANCE_TYPE'))
+          run_params.store(:image_id, checkEnv('LEEROY_AWS_LINUX_AMI'))
+          run_params.store(:key_name, checkEnv('LEEROY_BUILD_SSH_KEYPAIR'))
+          run_params.store(:instance_type, checkEnv('LEEROY_BUILD_INSTANCE_TYPE'))
 
-          run_params.store('iam_instance_profile', "Name=#{checkEnv('LEEROY_BUILD_PROFILE_NAME')}")
+          run_params.store(:min_count, 1)
+          run_params.store(:max_count, 1)
+
+          run_params.store(:iam_instance_profile, {:name =>  checkEnv('LEEROY_BUILD_PROFILE_NAME')})
 
           # user_data file depends on options
           phase = options[:phase]
           user_data = File.join(checkEnv('LEEROY_USER_DATA_PREFIX'), phase)
           if File.readable?(user_data)
-            user_data_uri = URI.join('file:///', File.absolute_path(user_data))
-            run_params.store('user_data', user_data_uri)
+            run_params.store(:user_data, IO.readlines(user_data).join(''))
           else
             raise "You must provide a readable user data script at #{user_data}."
           end
 
           logger.debug "run_params: #{run_params.inspect}"
 
+          resp = ec2Request(:run_instances, run_params)
 
-          instanceid = 'DUMMY_INSTANCEID'
+          instanceid = resp.instances[0].instance_id
+
+          logger.debug "instanceid: #{instanceid}"
 
           state.instanceid = instanceid
 
