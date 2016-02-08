@@ -5,6 +5,7 @@ require 'gli'
 
 require 'leeroy'
 require 'leeroy/task/instantiate'
+require 'leeroy/task/terminate'
 require 'leeroy/task/stub'
 
 include GLI::App
@@ -49,6 +50,18 @@ module Leeroy
         end
 
         task = Leeroy::Task::Instantiate.new(global_options: global_options, options: options, args: args)
+        task.perform
+      end
+    end
+
+    desc "Terminates an EC2 instance."
+    command :terminate do |c|
+
+      c.desc "Instance ID (or IDs as comma-delimited strings) to terminate (reads from state if none provided)."
+      c.flag [:i, :instance], :type => Array
+
+      c.action do |global_options,options,args|
+        task = Leeroy::Task::Terminate.new(global_options: global_options, options: options, args: args)
         task.perform
       end
     end

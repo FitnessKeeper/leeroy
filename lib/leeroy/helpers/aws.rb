@@ -163,6 +163,20 @@ module Leeroy
 
       def destroyInstance(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
         begin
+          # did we get instance ID(s)?
+          instanceids = options.fetch(:instance, nil)
+          if instanceids.nil?
+            instanceids = Array(state.instanceid)
+          end
+
+          logger.debug "instanceids: #{instanceids}"
+
+          run_params = {}
+          run_params.store(:instance_ids, instanceids)
+
+          resp = ec2Request(:terminate_instances, run_params)
+
+          logger.debug "resp: #{resp.awesome_inspect}"
 
         rescue StandardError => e
           raise e
