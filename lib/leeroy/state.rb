@@ -1,15 +1,13 @@
 require 'leeroy/types/dash'
 require 'leeroy/types/statedata'
 require 'leeroy/types/statemetadata'
+require 'leeroy/helpers/logging'
 require 'leeroy/helpers/polling'
 require 'leeroy/helpers/state'
 
 module Leeroy
-  Yell.new :stderr, :name => 'Leeroy::State'
-
   class State < Leeroy::Types::Dash
-    include Yell::Loggable
-
+    include Leeroy::Helpers::Logging
     include Leeroy::Helpers::Polling
     include Leeroy::Helpers::State
 

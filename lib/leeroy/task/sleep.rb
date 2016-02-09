@@ -2,9 +2,6 @@ require 'leeroy/task'
 
 module Leeroy
   module Task
-    trace_levels = [:debug]
-    Yell.new :stderr, :name => 'Leeroy::Task::Sleep', :trace => trace_levels
-
     class Sleep < Leeroy::Task::Base
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)

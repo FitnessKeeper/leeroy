@@ -1,21 +1,18 @@
 require 'leeroy'
 require 'leeroy/env'
 require 'leeroy/helpers'
+require 'leeroy/helpers/logging'
 require 'leeroy/state'
-
-require 'yell'
+require 'leeroy/task'
 
 module Leeroy
   module Task
-    trace_levels = [:debug]
-    Yell.new :stderr, :name => 'Leeroy::Task::Base', :trace => trace_levels
-
     class Base
-      include Yell::Loggable
 
       include Leeroy::Task
       include Leeroy::Helpers
       include Leeroy::Helpers::Env
+      include Leeroy::Helpers::Logging
       include Leeroy::Helpers::State
 
       def initialize(params = {})

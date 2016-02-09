@@ -1,13 +1,12 @@
 require 'yell'
 
+require 'leeroy/helpers/logging'
 require 'leeroy/types/dash'
 
 module Leeroy
   module Types
-    Yell.new :stderr, :name => 'Leeroy::Types::StateData'
-
     class StateData < Leeroy::Types::Dash
-      include Yell::Loggable
+      include Leeroy::Helpers::Logging
 
       property :message, coerce: String
       property :instanceid

@@ -1,14 +1,13 @@
 require 'chronic'
 require 'yell'
 
+require 'leeroy/helpers/logging'
 require 'leeroy/types/dash'
 
 module Leeroy
   module Types
-    Yell.new :stderr, :name => 'Leeroy::Types::StateMetadata'
-
     class StateMetadata < Leeroy::Types::Dash
-      include Yell::Loggable
+      include Leeroy::Helpers::Logging
 
       property :task, required: true
       property :previous, default: nil

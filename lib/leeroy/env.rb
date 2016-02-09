@@ -3,16 +3,12 @@ Dotenv.load
 
 require 'leeroy/types/mash'
 require 'leeroy/helpers/env'
-
-require 'yell'
+require 'leeroy/helpers/logging'
 
 module Leeroy
-  Yell.new :stderr, :name => 'Leeroy::Env'
-
   class Env < Leeroy::Types::Mash
-    include Yell::Loggable
-
     include Leeroy::Helpers::Env
+    include Leeroy::Helpers::Logging
 
     def initialize(env = ENV)
       begin
