@@ -13,7 +13,5 @@ module Leeroy
     include Leeroy::Helpers::Logging
     attr_reader :global_options, :options, :args
 
-    attr :state
-
   end
 end
