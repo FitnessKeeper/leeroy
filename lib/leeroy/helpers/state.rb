@@ -28,7 +28,7 @@ module Leeroy
 
       def load_state
         begin
-          logger.debug("loading state from stdin")
+          logger.debug "loading state from stdin"
           lines = []
 
           while line = $stdin.gets do
@@ -48,9 +48,16 @@ module Leeroy
       end
 
       def dump_state
-        logger.debug("dumping state to stdout")
-        self.state.metadata.previous = self.state.metadata.task
+        logger.debug "dumping state to stdout"
         $stdout.puts self.state.to_json
+      end
+
+      def rotate_task_metadata
+        logger.debug "rotating task metadata"
+        if self.state.metadata.task?
+          self.state.metadata.previous = self.state.metadata.task
+        end
+        self.state.metadata.task = self.class.to_s
       end
 
       def to_s

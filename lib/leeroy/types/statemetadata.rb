@@ -9,7 +9,7 @@ module Leeroy
     class StateMetadata < Leeroy::Types::Dash
       include Leeroy::Helpers::Logging
 
-      property :task, required: true
+      property :task, default: nil
       property :previous, default: nil
       property :created, coerce: Proc.new { |t| Chronic.parse(t) }, default: 'now'
 

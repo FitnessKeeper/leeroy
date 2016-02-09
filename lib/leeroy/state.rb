@@ -12,8 +12,8 @@ module Leeroy
     include Leeroy::Helpers::State
 
     # state properties
-    property :data, coerce: Leeroy::Types::StateData
-    property :metadata, coerce: Leeroy::Types::StateMetadata
+    property :data, coerce: Leeroy::Types::StateData, default: {}
+    property :metadata, coerce: Leeroy::Types::StateMetadata, default: {}
 
     def fetch(*args, &block)
       begin

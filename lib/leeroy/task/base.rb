@@ -37,6 +37,7 @@ module Leeroy
 
           logger.debug("setting state")
           @state = Leeroy::State.new(state_from_pipe(params.fetch(:state, {})))
+          rotate_task_metadata
           logger.debug("state: #{self.state}")
 
           logger.debug("base initialization of #{self.class.to_s} complete")
