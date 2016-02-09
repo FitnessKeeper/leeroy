@@ -11,7 +11,7 @@ module Leeroy
 
       property :task, default: nil
       property :previous, default: nil
-      property :created, coerce: Proc.new { |t| Chronic.parse(t) }, default: 'now'
+      property :started, coerce: Proc.new { |t| Chronic.parse(t) }, default: 'now'
 
     end
   end

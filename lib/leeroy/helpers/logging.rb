@@ -1,6 +1,7 @@
 require 'yell'
 
 require 'leeroy/helpers'
+require 'leeroy/helpers/env'
 
 module Leeroy
   module Helpers
@@ -12,7 +13,7 @@ module Leeroy
       Trace_Levels = [:debug]
 
       # define a logger
-      Yell.new :stderr, name: self.class.to_s, format: Trace_Format, trace: Trace_Levels
+      Yell.new :stderr, name: self.class.to_s, format: Trace_Format, trace: Trace_Levels, level: :debug
 
       # make this class loggable
       self.class.send :include, Yell::Loggable
