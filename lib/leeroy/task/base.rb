@@ -39,7 +39,11 @@ module Leeroy
           logger.debug("env: #{self.env.to_s}")
 
           logger.debug("setting state")
-          @state = Leeroy::State.new(params.fetch(:state, {}), global_options[:pipe])
+          # @state = Leeroy::State.new(params.fetch(:state, {}), global_options[:pipe])
+          @state = Leeroy::State.new(
+            data: params.fetch(:state, {}),
+            metadata: {:current => self.class},
+          )
           logger.debug("state: #{self.state.to_s}")
 
           logger.debug("base initialization of #{self.class.to_s} complete")

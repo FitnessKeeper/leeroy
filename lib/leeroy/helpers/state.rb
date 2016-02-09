@@ -33,7 +33,11 @@ module Leeroy
 
       def dump_state
         logger.debug("dumping state to stdout")
-        $stdout.puts self.state.to_json
+        $stdout.puts self.state.data.to_json
+      end
+
+      def to_s
+        "#{self.metadata},#{self.data}"
       end
     end
   end

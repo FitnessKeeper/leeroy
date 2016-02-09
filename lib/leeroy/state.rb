@@ -1,4 +1,6 @@
 require 'leeroy/types/dash'
+require 'leeroy/types/statedata'
+require 'leeroy/types/statemetadata'
 require 'leeroy/helpers/polling'
 require 'leeroy/helpers/state'
 
@@ -12,27 +14,39 @@ module Leeroy
     include Leeroy::Helpers::State
 
     # state properties
-    property :current_task
-    property :previous_task, default: nil
+    property :data, coerce: Leeroy::Types::StateData
+    property :metadata, coerce: Leeroy::Types::StateMetadata
 
-    def initialize(state = {}, pipe = false)
+    def method_missing(method, *args, &block)
       begin
-        logger.debug "initializing #{self.class}"
+        self.data.send(method.to_sym, *args, &block)
 
-        if pipe
-          logger.debug "running in pipe mode"
-          state = state.merge(load_state)
-        else
-          logger.debug "not running in pipe mode"
-        end
-
-        logger.debug "initializing with state: #{state.inspect}"
-
-        super(state)
+      rescue ArgumentError => e
+        super
 
       rescue StandardError => e
         raise e
       end
     end
+
+    # def initialize(state = {}, pipe = false)
+    #   begin
+    #     logger.debug "initializing #{self.class}"
+    #
+    #     if pipe
+    #       logger.debug "running in pipe mode"
+    #       state = state.merge(load_state)
+    #     else
+    #       logger.debug "not running in pipe mode"
+    #     end
+    #
+    #     logger.debug "initializing with state: #{state.inspect}"
+    #
+    #     super(state)
+    #
+    #   rescue StandardError => e
+    #     raise e
+    #   end
+    # end
   end
 end
