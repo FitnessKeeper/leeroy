@@ -1,3 +1,4 @@
+require 'chronic'
 require 'yell'
 
 require 'leeroy/types/dash'
@@ -9,8 +10,8 @@ module Leeroy
     class StateMetadata < Leeroy::Types::Dash
       include Yell::Loggable
 
-      property :current, required: true
-      property :previous, default: nil
+      property :task, required: true
+      property :created, coerce: Proc.new { |t| Chronic.parse(t) }, default: 'now'
 
     end
   end

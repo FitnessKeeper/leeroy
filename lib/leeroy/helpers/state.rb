@@ -10,6 +10,22 @@ module Leeroy
 
       attr_accessor :state
 
+      def state_from_pipe(state = {}, global_options = self.global_options)
+        begin
+          if global_options.fetch(:pipe, false)
+            logger.debug "running in pipe mode"
+            state = state.merge(load_state)
+          else
+            logger.debug "not running in pipe mode"
+          end
+
+          state
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
       def load_state
         begin
           logger.debug("loading state from stdin")

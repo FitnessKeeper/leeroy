@@ -40,9 +40,10 @@ module Leeroy
 
           logger.debug("setting state")
           # @state = Leeroy::State.new(params.fetch(:state, {}), global_options[:pipe])
+          # are we reading from a pipe?
           @state = Leeroy::State.new(
-            data: params.fetch(:state, {}),
-            metadata: {:current => self.class.to_s},
+            data: state_from_pipe(params.fetch(:state, {})),
+            metadata: {:task => self.class.to_s},
           )
           logger.debug("state: #{self.state}")
 
@@ -61,7 +62,6 @@ module Leeroy
           raise e
         end
       end
-
     end
   end
 end
