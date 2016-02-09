@@ -1,15 +1,19 @@
-require 'leeroy/hashiemash'
+require 'leeroy/types/dash'
 require 'leeroy/helpers/polling'
 require 'leeroy/helpers/state'
 
 module Leeroy
   Yell.new :stderr, :name => 'Leeroy::State'
 
-  class State < Leeroy::HashieMash
+  class State < Leeroy::Types::Dash
     include Yell::Loggable
 
     include Leeroy::Helpers::Polling
     include Leeroy::Helpers::State
+
+    # state properties
+    property :current_task
+    property :previous_task, default: nil
 
     def initialize(state = {}, pipe = false)
       begin

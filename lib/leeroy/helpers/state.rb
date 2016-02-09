@@ -1,7 +1,6 @@
 require 'hashie'
 require 'json'
 
-require 'leeroy/hashiemash'
 require 'leeroy/helpers'
 
 module Leeroy

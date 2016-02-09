@@ -1,7 +1,7 @@
 require 'dotenv'
 Dotenv.load
 
-require 'leeroy/hashiemash'
+require 'leeroy/types/mash'
 require 'leeroy/helpers/env'
 
 require 'yell'
@@ -9,7 +9,7 @@ require 'yell'
 module Leeroy
   Yell.new :stderr, :name => 'Leeroy::Env'
 
-  class Env < Leeroy::HashieMash
+  class Env < Leeroy::Types::Mash
     include Yell::Loggable
 
     include Leeroy::Helpers::Env
