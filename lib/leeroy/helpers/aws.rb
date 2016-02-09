@@ -1,7 +1,10 @@
 require 'aws-sdk'
+require 'base64'
 
 require 'leeroy/helpers'
 require 'leeroy/helpers/env'
+
+require 'leeroy/types/mash'
 
 module Leeroy
   module Helpers
@@ -27,9 +30,12 @@ module Leeroy
         begin
           logger.debug "constructing EC2 request for '#{method}'"
 
+          params_mash = Leeroy::Types::Mash.new(params)
+          params = params_mash
+
           dry_run = global_options[:op] ? false : true
 
-          params[:dry_run] = dry_run
+          params.dry_run = dry_run
 
           logger.debug "params: #{params.inspect}"
 
@@ -121,17 +127,18 @@ module Leeroy
           logger.debug "creating an EC2 instance"
 
           # gather the necessary parameters
-          run_params = {}
+          run_params = Hashie::Mash.new
 
-          run_params.store(:security_group_ids, Array(state.sgid))
-          run_params.store(:subnet_id, state.subnetid)
+          # run_params.store(:security_group_ids, Array(state.sgid))
+          run_params.security_group_ids = Array(state.sgid)
+          run_params.subnet_id = state.subnetid
 
-          run_params.store(:image_id, checkEnv('LEEROY_AWS_LINUX_AMI'))
-          run_params.store(:key_name, checkEnv('LEEROY_BUILD_SSH_KEYPAIR'))
-          run_params.store(:instance_type, checkEnv('LEEROY_BUILD_INSTANCE_TYPE'))
+          run_params.image_id = checkEnv('LEEROY_AWS_LINUX_AMI')
+          run_params.key_name = checkEnv('LEEROY_BUILD_SSH_KEYPAIR')
+          run_params.instance_type = checkEnv('LEEROY_BUILD_INSTANCE_TYPE')
 
-          run_params.store(:min_count, 1)
-          run_params.store(:max_count, 1)
+          run_params.min_count = 1
+          run_params.max_count = 1
 
           run_params.store(:iam_instance_profile, {:name =>  checkEnv('LEEROY_BUILD_PROFILE_NAME')})
 
@@ -139,7 +146,7 @@ module Leeroy
           phase = options[:phase]
           user_data = File.join(checkEnv('LEEROY_USER_DATA_PREFIX'), phase)
           if File.readable?(user_data)
-            run_params.store(:user_data, IO.readlines(user_data).join(''))
+            run_params.user_data = Base64.urlsafe_encode64(IO.readlines(user_data).join(''))
           else
             raise "You must provide a readable user data script at #{user_data}."
           end
@@ -171,12 +178,14 @@ module Leeroy
 
           logger.debug "instanceids: #{instanceids}"
 
-          run_params = {}
-          run_params.store(:instance_ids, instanceids)
+          run_params = Leeroy::Types::Mash.new
+          run_params.instance_ids = instanceids
 
           resp = ec2Request(:terminate_instances, run_params)
 
           logger.debug "resp: #{resp.awesome_inspect}"
+
+          resp.terminating_instances.collect { |i| i.instance_id }.sort
 
         rescue StandardError => e
           raise e

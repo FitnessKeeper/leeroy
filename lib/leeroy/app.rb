@@ -6,6 +6,7 @@ require 'gli'
 require 'leeroy'
 require 'leeroy/task/instantiate'
 require 'leeroy/task/terminate'
+require 'leeroy/task/sleep'
 require 'leeroy/task/stub'
 
 include GLI::App
@@ -63,6 +64,15 @@ module Leeroy
       c.action do |global_options,options,args|
         task = Leeroy::Task::Terminate.new(global_options: global_options, options: options, args: args)
         task.perform
+      end
+    end
+
+    desc "Sleeps for some number of seconds."
+    command :sleep do |c|
+      c.desc "Number of seconds to sleep."
+      c.flag [:i, :interval], :default_value => 2
+      c.action do |global_options,options,args|
+        Leeroy::Task::Sleep.new(global_options: global_options, options: options, args: args).perform
       end
     end
 

@@ -4,6 +4,9 @@ require 'leeroy/helpers/aws'
 
 module Leeroy
   module Task
+    trace_levels = [:debug]
+    Yell.new :stderr, :name => 'Leeroy::Task::Instantiate', :trace => trace_levels
+
     class Instantiate < Leeroy::Task::Base
       include Leeroy::Helpers::AWS
 

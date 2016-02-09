@@ -12,7 +12,12 @@ module Leeroy
           super(args, options, global_options)
 
           # destroy instance
-          destroyInstance
+          terminated = destroyInstance
+
+          if terminated.include?(self.state.instanceid)
+            logger.debug "clearing instanceid #{self.state.instanceid} from state"
+            self.state.instanceid = nil
+          end
 
           dump_state
 
