@@ -49,7 +49,8 @@ module Leeroy
 
       def dump_state
         logger.debug("dumping state to stdout")
-        $stdout.puts self.state.data.to_json
+        self.state.metadata.previous = self.state.metadata.task
+        $stdout.puts self.state.to_json
       end
 
       def to_s

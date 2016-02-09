@@ -11,6 +11,7 @@ module Leeroy
       include Yell::Loggable
 
       property :task, required: true
+      property :previous, default: nil
       property :created, coerce: Proc.new { |t| Chronic.parse(t) }, default: 'now'
 
     end

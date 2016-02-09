@@ -39,12 +39,7 @@ module Leeroy
           logger.debug("env: #{self.env.to_s}")
 
           logger.debug("setting state")
-          # @state = Leeroy::State.new(params.fetch(:state, {}), global_options[:pipe])
-          # are we reading from a pipe?
-          @state = Leeroy::State.new(
-            data: state_from_pipe(params.fetch(:state, {})),
-            metadata: {:task => self.class.to_s},
-          )
+          @state = Leeroy::State.new(state_from_pipe(params.fetch(:state, {})))
           logger.debug("state: #{self.state}")
 
           logger.debug("base initialization of #{self.class.to_s} complete")
