@@ -18,6 +18,9 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
+  # external dependencies for building gems
+  spec.requirements << 'LibGit2 dependencies for rugged: https://github.com/libgit2/libgit2#optional-dependencies, also CMake and pkg-config'
+
   spec.add_development_dependency "aruba", "~> 0.11.1"
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake", "~> 10.0"
@@ -32,5 +35,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "fire_poll", "~> 1.2"
   spec.add_runtime_dependency "gli", "~> 2.13"
   spec.add_runtime_dependency "hashie", "~> 3.4"
+  spec.add_runtime_dependency "rugged", "~> 0.23"
   spec.add_runtime_dependency "yell", "~> 2.0"
 end
