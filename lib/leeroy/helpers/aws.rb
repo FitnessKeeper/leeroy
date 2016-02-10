@@ -141,7 +141,6 @@ module Leeroy
           # gather the necessary parameters
           run_params = Hashie::Mash.new
 
-          # run_params.store(:security_group_ids, Array(state.sgid))
           run_params.security_group_ids = Array(state.sgid)
           run_params.subnet_id = state.subnetid
 
@@ -248,7 +247,7 @@ module Leeroy
           logger.debug "resourceids: #{resourceids}"
           run_params.resources = resourceids
 
-          tag_array = tags.collect {|key,value| {'key' => k, 'value' => v}}
+          tag_array = tags.collect {|key,value| {'key' => key, 'value' => value}}
 
           logger.debug "tags: #{tags}"
           logger.debug "tag_array: #{tag_array}"
@@ -264,11 +263,11 @@ module Leeroy
       end
 
       def goldMasterInstanceName(env_name = 'LEEROY_GOLD_MASTER_NAME')
-        checkEnv(env_name, 'gold_master')
+        checkEnv(env_name)
       end
 
-      def goldMasterInstanceName(env_app = 'LEEROY_APP_NAME', env_name = 'LEEROY_BUILD_TARGET')
-        [checkEnv(env_app, 'application'), checkEnv(env_name, 'build_target')].join('-')
+      def applicationInstanceName(env_app = 'LEEROY_APP_NAME', env_name = 'LEEROY_BUILD_TARGET')
+        [checkEnv(env_app), checkEnv(env_name)].join('-')
       end
 
       # S3
