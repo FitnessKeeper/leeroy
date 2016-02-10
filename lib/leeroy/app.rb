@@ -1,9 +1,10 @@
-#!/usr/bin/env rubhh
+#!/usr/bin/env ruby
 
 require 'ap'
 require 'gli'
 
 require 'leeroy'
+require 'leeroy/task/image'
 require 'leeroy/task/instantiate'
 require 'leeroy/task/terminate'
 require 'leeroy/task/sleep'
@@ -13,6 +14,9 @@ include GLI::App
 
 module Leeroy
   module App
+
+    # constants
+    VALID_PHASE = ['gold_master','application']
 
     program_desc 'Automate tasks with Jenkins'
 
@@ -40,14 +44,14 @@ module Leeroy
     desc "Instantiates an EC2 instance for imaging."
     command :instantiate do |c|
 
-      valid_phase = ['gold_master','application']
+      valid_phase = VALID_PHASE
       c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
       c.flag [:p, :phase], :must_match => valid_phase
 
       c.action do |global_options,options,args|
         # validate input
         if options[:phase].nil?
-          help_now! "You must pass an argument for '--stage'."
+          help_now! "You must pass an argument for '--phase'."
         end
 
         task = Leeroy::Task::Instantiate.new(global_options: global_options, options: options, args: args)
@@ -63,6 +67,24 @@ module Leeroy
 
       c.action do |global_options,options,args|
         task = Leeroy::Task::Terminate.new(global_options: global_options, options: options, args: args)
+        task.perform
+      end
+    end
+
+    desc "Creates an image from a running EC2 instance."
+    command :image do |c|
+
+      valid_phase = VALID_PHASE
+      c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
+      c.flag [:p, :phase], :must_match => valid_phase
+
+      c.action do |global_options,options,args|
+        # validate input
+        if options[:phase].nil?
+          help_now! "You must pass an argument for '--phase'."
+        end
+
+        task = Leeroy::Task::Image.new(global_options: global_options, options: options, args: args)
         task.perform
       end
     end

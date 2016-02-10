@@ -205,6 +205,52 @@ module Leeroy
         end
       end
 
+
+      def createImage(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+        begin
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def createTags(tags = {}, resourceids = [], state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+        begin
+          if resourceids.length == 0
+            if state.instanceid?
+              logger.debug "no resourceids provided for tagging, defaulting to instanceid #{state.instanceid} from state"
+              resourceids.push(state.instanceid.to_s)
+            end
+          end
+
+          run_params = Leeroy::Types::Mash.new
+
+          logger.debug "resourceids: #{resourceids}"
+          run_params.resources = resourceids
+
+          tag_array = tags.collect {|key,value| {'key' => k, 'value' => v}}
+
+          logger.debug "tags: #{tags}"
+          logger.debug "tag_array: #{tag_array}"
+          run_params.tags = tag_array
+
+          resp = ec2Request(:create_tags, run_params)
+
+          logger.debug "resp: #{resp.awesome_inspect}"
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def goldMasterInstanceName(env_name = 'LEEROY_GOLD_MASTER_NAME')
+        checkEnv(env_name, 'gold_master')
+      end
+
+      def goldMasterInstanceName(env_app = 'LEEROY_APP_NAME', env_name = 'LEEROY_BUILD_TARGET')
+        [checkEnv(env_app, 'application'), checkEnv(env_name, 'build_target')].join('-')
+      end
+
       # S3
 
       def setSemaphore(key, payload = '', path = '')

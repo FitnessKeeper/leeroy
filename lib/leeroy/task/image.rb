@@ -4,14 +4,12 @@ require 'leeroy/helpers/aws'
 
 module Leeroy
   module Task
-    class Instantiate < Leeroy::Task::Base
+    class Image < Leeroy::Task::Base
       include Leeroy::Helpers::AWS
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)
         begin
           super(args, options, global_options)
-
-          phase = options[:phase]
 
           # resolve VPC ID
           vpcname = checkEnv('LEEROY_BUILD_VPC')
@@ -31,16 +29,6 @@ module Leeroy
           # create instance
           instanceid = createInstance
           self.state.instanceid = instanceid
-
-          # tag instance
-          if phase == 'gold_master'
-            instance_name = goldMasterInstanceName
-          elsif phase == 'application'
-            instance_name = applicationInstanceName
-          else
-            raise "unable to determine instance name for phase '#{phase}'"
-          end
-          createTags({'Name' => instance_name})
 
           dump_state
 
