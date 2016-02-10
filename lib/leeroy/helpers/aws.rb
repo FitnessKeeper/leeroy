@@ -65,6 +65,10 @@ module Leeroy
           logger.debug "vpcid: #{vpcid}"
           vpcid
 
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+
         rescue StandardError => e
           raise e
         end
@@ -93,6 +97,10 @@ module Leeroy
           logger.debug "sgid: #{sgid}"
           sgid
 
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+
         rescue StandardError => e
           raise e
         end
@@ -116,6 +124,10 @@ module Leeroy
 
           logger.debug "subnetid: #{subnetid}"
           subnetid
+
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
 
         rescue StandardError => e
           raise e
@@ -176,6 +188,10 @@ module Leeroy
 
           instanceid
 
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+
         rescue StandardError => e
           raise e
         end
@@ -199,6 +215,10 @@ module Leeroy
           logger.debug "resp: #{resp.awesome_inspect}"
 
           resp.terminating_instances.collect { |i| i.instance_id }.sort
+
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
 
         rescue StandardError => e
           raise e
