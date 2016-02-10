@@ -9,6 +9,7 @@ PATH
       fire_poll (~> 1.2)
       gli (~> 2.13)
       hashie (~> 3.4)
+      multi_json (~> 1.11)
       rugged (~> 0.23)
       yell (~> 2.0)
 

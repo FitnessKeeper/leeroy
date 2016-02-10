@@ -1,5 +1,5 @@
 require 'hashie'
-require 'json'
+require 'multi_json'
 
 require 'leeroy/helpers'
 
@@ -41,7 +41,8 @@ module Leeroy
           joined = lines.join
           logger.debug "joined: #{joined}"
 
-          JSON.parse(joined)
+          MultiJson.load(joined, :symbolize_keys => true)
+
         rescue StandardError => e
           raise e
         end
@@ -49,7 +50,7 @@ module Leeroy
 
       def dump_state
         logger.debug "dumping state to stdout"
-        $stdout.puts self.state.to_json
+        $stdout.puts MultiJson.dump(self.state)
       end
 
       def rotate_task_metadata
