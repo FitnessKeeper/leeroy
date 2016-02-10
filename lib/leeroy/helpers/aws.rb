@@ -133,7 +133,6 @@ module Leeroy
           run_params.security_group_ids = Array(state.sgid)
           run_params.subnet_id = state.subnetid
 
-          run_params.image_id = checkEnv('LEEROY_AWS_LINUX_AMI')
           run_params.key_name = checkEnv('LEEROY_BUILD_SSH_KEYPAIR')
           run_params.instance_type = checkEnv('LEEROY_BUILD_INSTANCE_TYPE')
 
@@ -142,8 +141,22 @@ module Leeroy
 
           run_params.store(:iam_instance_profile, {:name =>  checkEnv('LEEROY_BUILD_PROFILE_NAME')})
 
-          # user_data file depends on options
+          # some parameters depend on phase
           phase = options[:phase]
+          logger.debug "phase is #{phase}"
+
+          # AMI id depends on phase
+          if phase == 'gold_master'
+            image_id = checkEnv('LEEROY_AWS_LINUX_AMI')
+          elsif phase == 'application'
+            image_id = state.imageid
+          end
+
+          raise "unable to determine image ID for phase '#{phase}'" if image_id.nil?
+
+          run_params.image_id = image_id
+
+          # user_data file depends on phase
           user_data = File.join(checkEnv('LEEROY_USER_DATA_PREFIX'), phase)
           if File.readable?(user_data)
             run_params.user_data = Base64.urlsafe_encode64(IO.readlines(user_data).join(''))
