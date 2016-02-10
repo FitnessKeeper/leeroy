@@ -228,6 +228,10 @@ module Leeroy
       def createImage(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
         begin
 
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+
         rescue StandardError => e
           raise e
         end
@@ -257,17 +261,45 @@ module Leeroy
 
           logger.debug "resp: #{resp.awesome_inspect}"
 
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+
         rescue StandardError => e
           raise e
         end
       end
 
-      def goldMasterInstanceName(env_name = 'LEEROY_GOLD_MASTER_NAME')
+      def filterImages(selector, collector = proc { |x| x }, state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+        begin
+          run_params = Leeroy::Types::Mash.new
+
+          run_params.owners = ['self']
+
+          resp = ec2Request(:describe_images, run_params)
+
+          # now filter based on callback
+          resp.images.select {|x| selector.call(x)}.collect {|x| collector.call(x)}
+
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def getGoldMasterInstanceName(env_name = 'LEEROY_GOLD_MASTER_NAME')
         checkEnv(env_name)
       end
 
-      def applicationInstanceName(env_app = 'LEEROY_APP_NAME', env_name = 'LEEROY_BUILD_TARGET')
-        [checkEnv(env_app), checkEnv(env_name)].join('-')
+      def getApplicationInstanceName(index, env_app = 'LEEROY_APP_NAME', env_name = 'LEEROY_BUILD_TARGET')
+        if index.nil?
+          # determine the index by looking at existing images
+        end
+
+        [checkEnv(env_app), checkEnv(env_name), index].join('-')
       end
 
       # S3
