@@ -34,9 +34,9 @@ module Leeroy
 
           # tag instance
           if phase == 'gold_master'
-            instance_name = goldMasterInstanceName
+            instance_name = getGoldMasterInstanceName
           elsif phase == 'application'
-            instance_name = applicationInstanceName
+            instance_name = getApplicationInstanceName
           else
             raise "unable to determine instance name for phase '#{phase}'"
           end
