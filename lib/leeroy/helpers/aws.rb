@@ -270,7 +270,7 @@ module Leeroy
         end
       end
 
-      def filterImages(selector, collector = proc { |x| x }, state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+      def filterImages(selector, collector = lambda { |x| x }, state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
         begin
           run_params = Leeroy::Types::Mash.new
 
@@ -295,11 +295,19 @@ module Leeroy
       end
 
       def getApplicationInstanceName(index, env_app = 'LEEROY_APP_NAME', env_name = 'LEEROY_BUILD_TARGET')
+        name_prefix = [checkEnv(env_app), checkEnv(env_name), index].join('-')
+        logger.debug "name_prefix: #{name_prefix}"
+
         if index.nil?
           # determine the index by looking at existing images
+          selector = lambda {|image| image.name =~ /^#{name_prefix}/}
+          # and extract the names
+          collector = lambda {|image| image.name}
+
+          image_names = filterImages(selector, collector)
+          logger.debug image_names.awesome_inspect
         end
 
-        [checkEnv(env_app), checkEnv(env_name), index].join('-')
       end
 
       # S3
