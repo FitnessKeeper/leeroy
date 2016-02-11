@@ -1,5 +1,6 @@
 require 'aws-sdk'
 require 'base64'
+require 'open-uri-s3'
 
 require 'leeroy/helpers'
 require 'leeroy/helpers/env'
@@ -13,8 +14,8 @@ module Leeroy
 
       attr :ec2, :s3
 
-      def initialize(params = {})
-        super(params)
+      def initialize(*args, &block)
+        super(*args, &block)
 
         logger.debug "initializing AWS helpers"
 
@@ -311,6 +312,22 @@ module Leeroy
       end
 
       # S3
+
+      def s3Request(method, params = {}, s3 = self.s3, options = self.options, global_options = self.global_options)
+        begin
+          logger.debug "constructing S3 request for '#{method}'"
+
+          params_mash = Leeroy::Types::Mash.new(params)
+          params = params_mash
+
+          logger.debug "params: #{params.inspect}"
+
+          s3.send(method.to_sym, params)
+
+        rescue StandardError => e
+          raise e
+        end
+      end
 
       def setSemaphore(key, payload = '', path = '')
         begin
