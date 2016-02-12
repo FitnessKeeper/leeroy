@@ -10,6 +10,16 @@ module Leeroy
     include Leeroy::Helpers::Env
     include Leeroy::Helpers::Logging
 
+    # constants
+    S3_PREFIXES = {
+      :secrets    => 'secrets',
+      :jenkins    => 'jenkins',
+      :builds     => 'builds',
+      :logs       => 'logs',
+      :semaphores => 'semaphores',
+      :tests      => 'tests',
+    }
+
     def initialize(env = ENV)
       begin
         logger.debug "initializing #{self.class}"

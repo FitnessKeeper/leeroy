@@ -42,6 +42,13 @@ module Leeroy
           end
           createTags({'Name' => instance_name})
 
+          # write semaphore
+          # FIXME read the payload from file reference in env var
+          payload = 'DUMMY_PAYLOAD'
+          s3_object = buildS3ObjectName(instance_name, 'semaphores')
+          semaphore = setSemaphore(s3_object, payload)
+          self.state.semaphore = semaphore
+
           dump_state
 
           logger.debug "done performing for #{self.class}"

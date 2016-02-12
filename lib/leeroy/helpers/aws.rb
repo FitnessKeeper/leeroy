@@ -1,6 +1,5 @@
 require 'aws-sdk'
 require 'base64'
-require 'open-uri-s3'
 
 require 'leeroy/helpers'
 require 'leeroy/helpers/env'
@@ -329,8 +328,32 @@ module Leeroy
         end
       end
 
-      def setSemaphore(key, payload = '', path = '')
+      def buildS3ObjectName(key, type, prefixes = Leeroy::Env::S3_PREFIXES)
         begin
+          logger.debug "building S3 prefix (key: #{key}, type: #{type})"
+          pfx = Leeroy::Types::Mash.new(prefixes)
+          root = pfx.jenkins
+          prefix = pfx.fetch(type,type)
+
+          # FIXME i should do this with URI
+          [root, prefix, key].join('/')
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def setSemaphore(object, payload = '', bucket = checkEnv('LEEROY_S3_BUCKET'))
+        begin
+          logger.debug "setting a semaphore"
+
+          semaphore = Leeroy::Types::Mash.new
+          semaphore.object = object
+          semaphore.bucket = bucket
+
+          logger.debug "semaphore: #{semaphore}"
+
+          semaphore
 
         rescue StandardError => e
           raise e

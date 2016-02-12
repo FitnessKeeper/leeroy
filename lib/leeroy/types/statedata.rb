@@ -11,6 +11,7 @@ module Leeroy
       property :message, coerce: String
       property :instanceid
       property :imageid
+      property :semaphore
       property :sgid
       property :subnetid
       property :vpcid
