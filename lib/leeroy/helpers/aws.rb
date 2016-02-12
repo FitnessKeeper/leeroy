@@ -5,6 +5,7 @@ require 'leeroy/helpers'
 require 'leeroy/helpers/env'
 
 require 'leeroy/types/mash'
+require 'leeroy/types/semaphore'
 
 module Leeroy
   module Helpers
@@ -347,11 +348,10 @@ module Leeroy
         begin
           logger.debug "setting a semaphore"
 
-          semaphore = Leeroy::Types::Mash.new
-          semaphore.object = object
-          semaphore.bucket = bucket
-
+          semaphore = Leeroy::Types::Semaphore.new(bucket: bucket, object: object, payload: payload)
           logger.debug "semaphore: #{semaphore}"
+
+          # FIXME put the semaphore in S3
 
           semaphore
 

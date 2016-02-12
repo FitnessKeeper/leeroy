@@ -43,9 +43,8 @@ module Leeroy
           createTags({'Name' => instance_name})
 
           # write semaphore
-          # FIXME read the payload from file reference in env var
-          payload = 'DUMMY_PAYLOAD'
           s3_object = buildS3ObjectName(instance_name, 'semaphores')
+          payload = _readSemaphore(phase)
           semaphore = setSemaphore(s3_object, payload)
           self.state.semaphore = semaphore
 
@@ -58,6 +57,32 @@ module Leeroy
         end
       end
 
+      private
+
+      def _readSemaphore(phase)
+        begin
+          template = File.join(checkEnv('LEEROY_PROVISIONING_TEMPLATE_PREFIX'), "#{phase}.erb")
+          logger.debug "processing template '#{template}'"
+
+          # this is heinous
+          # http://stackoverflow.com/a/22777806/17597
+          rendered = String.new
+
+          begin
+            old_stdout = $stdout
+            $stdout = StringIO.new('','w')
+            ERB.new(File.read(template)).run
+            rendered = $stdout.string
+          ensure
+            $stdout = old_stdout
+          end
+
+          rendered
+
+        rescue StandardError => e
+          raise e
+        end
+      end
     end
   end
 end
