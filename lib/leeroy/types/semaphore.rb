@@ -9,6 +9,10 @@ module Leeroy
       property :object
       property :payload, coerce: Leeroy::Types::PackedString
 
+      def dump
+        self.payload.extract
+      end
+
     end
   end
 end
