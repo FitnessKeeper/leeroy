@@ -4,6 +4,7 @@ require 'base64'
 require 'leeroy/helpers'
 require 'leeroy/helpers/env'
 
+require 'leeroy/types/instance'
 require 'leeroy/types/mash'
 require 'leeroy/types/semaphore'
 
@@ -140,18 +141,18 @@ module Leeroy
           logger.debug "creating an EC2 instance"
 
           # gather the necessary parameters
-          run_params = Hashie::Mash.new
+          instance_params = Hashie::Mash.new
 
-          run_params.security_group_ids = Array(state.sgid)
-          run_params.subnet_id = state.subnetid
+          instance_params.security_group_ids = Array(state.sgid)
+          instance_params.subnet_id = state.subnetid
 
-          run_params.key_name = checkEnv('LEEROY_BUILD_SSH_KEYPAIR')
-          run_params.instance_type = checkEnv('LEEROY_BUILD_INSTANCE_TYPE')
+          instance_params.key_name = checkEnv('LEEROY_BUILD_SSH_KEYPAIR')
+          instance_params.instance_type = checkEnv('LEEROY_BUILD_INSTANCE_TYPE')
 
-          run_params.min_count = 1
-          run_params.max_count = 1
+          instance_params.min_count = 1
+          instance_params.max_count = 1
 
-          run_params.store(:iam_instance_profile, {:name =>  checkEnv('LEEROY_BUILD_PROFILE_NAME')})
+          instance_params.store(:iam_instance_profile, {:name =>  checkEnv('LEEROY_BUILD_PROFILE_NAME')})
 
           # some parameters depend on phase
           phase = options[:phase]
@@ -164,29 +165,41 @@ module Leeroy
             image_id = state.imageid
           end
 
+          instance_params.phase = phase
+
           raise "unable to determine image ID for phase '#{phase}'" if image_id.nil?
 
-          run_params.image_id = image_id
+          instance_params.image_id = image_id
 
           # user_data file depends on phase
           user_data = File.join(checkEnv('LEEROY_USER_DATA_PREFIX'), phase)
           if File.readable?(user_data)
-            run_params.user_data = Base64.urlsafe_encode64(IO.readlines(user_data).join(''))
+            instance_params.user_data = IO.readlines(user_data).join('')
           else
             raise "You must provide a readable user data script at #{user_data}."
           end
 
-          logger.debug "run_params: #{run_params.inspect}"
+          logger.debug "instance_params: #{instance_params.inspect}"
 
-          resp = ec2Request(:run_instances, run_params)
+          instance = Leeroy::Types::Instance.new(instance_params)
 
-          instanceid = resp.instances[0].instance_id
+          binding.irb
 
-          logger.debug "instanceid: #{instanceid}"
+          user_data = instance.user_data
+          logger.debug "user_data: #{user_data.inspect}"
+          # instance_id = instance.instantiate
 
-          state.instanceid = instanceid
+          exit
 
-          instanceid
+          # resp = ec2Request(:run_instances, run_params)
+          #
+          # instanceid = resp.instances[0].instance_id
+          #
+          # logger.debug "instanceid: #{instanceid}"
+          #
+          # state.instanceid = instanceid
+          #
+          # instanceid
 
         rescue Aws::EC2::Errors::DryRunOperation => e
           logger.info e.message

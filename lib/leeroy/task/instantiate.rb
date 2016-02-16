@@ -29,6 +29,7 @@ module Leeroy
           self.state.subnetid = subnetid
 
           # create instance
+          # FIXME this should be a call to Leeroy::Types::Instance.new
           instanceid = createInstance
           self.state.instanceid = instanceid
 
