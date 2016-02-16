@@ -185,17 +185,9 @@ module Leeroy
 
           instance_id = instance.instantiate
 
-          exit
+          state.instanceid = instanceid
 
-          # resp = ec2Request(:run_instances, run_params)
-          #
-          # instanceid = resp.instances[0].instance_id
-          #
-          # logger.debug "instanceid: #{instanceid}"
-          #
-          # state.instanceid = instanceid
-          #
-          # instanceid
+          instanceid
 
         rescue Aws::EC2::Errors::DryRunOperation => e
           logger.info e.message

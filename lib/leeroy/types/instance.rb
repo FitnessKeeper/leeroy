@@ -2,12 +2,14 @@ require 'base64'
 
 require 'leeroy'
 require 'leeroy/types/dash'
+require 'leeroy/helpers'
 require 'leeroy/helpers/aws'
+require 'leeroy/helpers/logging'
 
 module Leeroy
   module Types
     class Instance < Leeroy::Types::Dash
-      # include Leeroy::Helpers::AWS
+      include Leeroy::Helpers::Logging
 
       property :phase, required: true
 
@@ -35,7 +37,7 @@ module Leeroy
             :min_count,
             :security_group_ids,
             :subnet_id,
-          ].map {|key| run_params.send(key, self.send(key))}
+          ].map {|key| run_params.send(:store, key, self.send(key))}
 
           # user_data file depends on phase
           user_data = self.user_data
@@ -43,15 +45,13 @@ module Leeroy
 
           logger.debug "run_params: #{run_params.inspect}"
 
-          resp = ec2Request(:run_instances, run_params)
+          resp = Leeroy::Helpers::AWS.ec2Request(:run_instances, run_params)
 
           instanceid = resp.instances[0].instance_id
 
           logger.debug "instanceid: #{instanceid}"
 
-          logger.error "THIS IS WHERE YOU CALL RUN_INSTANCES"
-
-          # instance_id
+          instance_id
 
         rescue StandardError => e
           raise e
