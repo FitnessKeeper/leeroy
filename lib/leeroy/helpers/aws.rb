@@ -183,11 +183,7 @@ module Leeroy
 
           instance = Leeroy::Types::Instance.new(instance_params)
 
-          binding.irb
-
-          user_data = instance.user_data
-          logger.debug "user_data: #{user_data.inspect}"
-          # instance_id = instance.instantiate
+          instance_id = instance.instantiate
 
           exit
 

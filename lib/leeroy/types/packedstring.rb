@@ -16,7 +16,7 @@ module Leeroy
       end
 
       def extract
-        Zlib::Inflate.inflate(Base64.urlsafe_decode64(super))
+        Zlib::Inflate.inflate(Base64.urlsafe_decode64(self.to_s))
       end
 
     end
