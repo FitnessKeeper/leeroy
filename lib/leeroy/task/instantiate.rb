@@ -1,7 +1,6 @@
 require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
-require 'leeroy/types/mash'
 
 module Leeroy
   module Task

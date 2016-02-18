@@ -4,6 +4,7 @@ require 'leeroy/helpers'
 require 'leeroy/helpers/logging'
 require 'leeroy/state'
 require 'leeroy/task'
+require 'leeroy/types/mash'
 
 module Leeroy
   module Task
