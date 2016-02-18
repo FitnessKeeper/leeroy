@@ -152,7 +152,7 @@ module Leeroy
           instance_params.min_count = 1
           instance_params.max_count = 1
 
-          instance_params.store(:iam_instance_profile, {:name =>  checkEnv('LEEROY_BUILD_PROFILE_NAME')})
+          instance_params.store('iam_instance_profile', {:name =>  checkEnv('LEEROY_BUILD_PROFILE_NAME')})
 
           # some parameters depend on phase
           phase = options[:phase]

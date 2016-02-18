@@ -2,8 +2,6 @@ require 'base64'
 
 require 'leeroy'
 require 'leeroy/types/dash'
-require 'leeroy/helpers'
-require 'leeroy/helpers/aws'
 require 'leeroy/helpers/logging'
 
 module Leeroy
@@ -24,7 +22,7 @@ module Leeroy
       property :subnet_id, required: true
       property :user_data, default: '', coerce: Leeroy::Types::PackedString
 
-      def instantiate
+      def run_params
         begin
           run_params = Hashie::Mash.new
 
@@ -37,7 +35,7 @@ module Leeroy
             :min_count,
             :security_group_ids,
             :subnet_id,
-          ].map {|key| run_params.send(:store, key, self.send(key))}
+          ].map {|key| run_params.store(key.to_s, self.fetch(key))}
 
           # user_data file depends on phase
           user_data = self.user_data
@@ -45,13 +43,7 @@ module Leeroy
 
           logger.debug "run_params: #{run_params.inspect}"
 
-          resp = Leeroy::Helpers::AWS.ec2Request(:run_instances, run_params)
-
-          instanceid = resp.instances[0].instance_id
-
-          logger.debug "instanceid: #{instanceid}"
-
-          instance_id
+          run_params
 
         rescue StandardError => e
           raise e

@@ -29,8 +29,10 @@ module Leeroy
           self.state.subnetid = subnetid
 
           # create instance
-          # FIXME this should be a call to Leeroy::Types::Instance.new
-          instanceid = createInstance
+          instance_params = _genInstanceParams
+          instance = Leeroy::Types::Instance.new(instance_params)
+          resp = ec2Request(:run_instances, instance.run_params)
+          instanceid = resp.instances[0].instance_id
           self.state.instanceid = instanceid
 
           # tag instance
@@ -79,6 +81,58 @@ module Leeroy
           end
 
           rendered
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def _genInstanceParams(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+        begin
+          logger.debug "generating params for creating an EC2 instance"
+
+          # gather the necessary parameters
+          instance_params = Hashie::Mash.new
+
+          instance_params.security_group_ids = Array(state.sgid)
+          instance_params.subnet_id = state.subnetid
+
+          instance_params.key_name = checkEnv('LEEROY_BUILD_SSH_KEYPAIR')
+          instance_params.instance_type = checkEnv('LEEROY_BUILD_INSTANCE_TYPE')
+
+          instance_params.min_count = 1
+          instance_params.max_count = 1
+
+          instance_params.store('iam_instance_profile', {:name =>  checkEnv('LEEROY_BUILD_PROFILE_NAME')})
+
+          # some parameters depend on phase
+          phase = options[:phase]
+          logger.debug "phase is #{phase}"
+
+          # AMI id depends on phase
+          if phase == 'gold_master'
+            image_id = checkEnv('LEEROY_AWS_LINUX_AMI')
+          elsif phase == 'application'
+            image_id = state.imageid
+          end
+
+          instance_params.phase = phase
+
+          raise "unable to determine image ID for phase '#{phase}'" if image_id.nil?
+
+          instance_params.image_id = image_id
+
+          # user_data file depends on phase
+          user_data = File.join(checkEnv('LEEROY_USER_DATA_PREFIX'), phase)
+          if File.readable?(user_data)
+            instance_params.user_data = IO.readlines(user_data).join('')
+          else
+            raise "You must provide a readable user data script at #{user_data}."
+          end
+
+          logger.debug "instance_params: #{instance_params.inspect}"
+
+          instance_params
 
         rescue StandardError => e
           raise e
