@@ -41,7 +41,11 @@ module Leeroy
 
           logger.debug "params: #{params.inspect}"
 
-          ec2.send(method.to_sym, params)
+          resp = ec2.send(method.to_sym, params)
+
+          logger.debug "resp: #{resp.inspect}"
+
+          resp
 
         rescue StandardError => e
           raise e
@@ -213,8 +217,6 @@ module Leeroy
 
           resp = ec2Request(:terminate_instances, run_params)
 
-          logger.debug "resp: #{resp.awesome_inspect}"
-
           resp.terminating_instances.collect { |i| i.instance_id }.sort
 
         rescue Aws::EC2::Errors::DryRunOperation => e
@@ -260,8 +262,6 @@ module Leeroy
           run_params.tags = tag_array
 
           resp = ec2Request(:create_tags, run_params)
-
-          logger.debug "resp: #{resp.awesome_inspect}"
 
         rescue Aws::EC2::Errors::DryRunOperation => e
           logger.info e.message
@@ -323,7 +323,11 @@ module Leeroy
 
           logger.debug "params: #{params.inspect}"
 
-          s3.send(method.to_sym, params)
+          resp = s3.send(method.to_sym, params)
+
+          logger.debug "resp: #{resp.inspect}"
+
+          resp
 
         rescue StandardError => e
           raise e
@@ -361,8 +365,6 @@ module Leeroy
 
           resp = s3Request(:put_object, run_params)
 
-          logger.debug "resp: #{resp.inspect}"
-
           semaphore
 
         rescue StandardError => e
@@ -389,8 +391,6 @@ module Leeroy
           else
             logger.debug "#{semaphore} present, deleting"
             resp = s3Request(:delete_object, run_params)
-
-            logger.debug "resp: #{resp.inspect}"
           end
 
           semaphore
