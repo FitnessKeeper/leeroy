@@ -141,7 +141,7 @@ module Leeroy
           logger.debug "creating an EC2 instance"
 
           # gather the necessary parameters
-          instance_params = Hashie::Mash.new
+          instance_params = Leeroy::Types::Mash.new
 
           instance_params.security_group_ids = Array(state.sgid)
           instance_params.subnet_id = state.subnetid
@@ -353,6 +353,45 @@ module Leeroy
           logger.debug "semaphore: #{semaphore}"
 
           # FIXME put the semaphore in S3
+          run_params = Leeroy::Types::Mash.new
+
+          run_params.body = semaphore.dump
+          run_params.bucket = bucket
+          run_params.key = object
+
+          resp = s3Request(:put_object, run_params)
+
+          logger.debug "resp: #{resp.inspect}"
+
+          semaphore
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def clearSemaphore(semaphore)
+        begin
+          unless semaphore.kind_of?(Leeroy::Types::Semaphore)
+            semaphore = Leeroy::Types::Semaphore.new(semaphore)
+          end
+
+          run_params = Leeroy::Types::Mash.new
+          run_params.bucket = semaphore.bucket
+          run_params.key = semaphore.object
+
+          # is the object present in S3?
+          logger.debug "checking for presence of #{semaphore}"
+          resp = s3Request(:head_object, run_params)
+
+          if resp.delete_marker
+            logger.debug "#{semaphore} not present, continuing"
+          else
+            logger.debug "#{semaphore} present, deleting"
+            resp = s3Request(:delete_object, run_params)
+
+            logger.debug "resp: #{resp.inspect}"
+          end
 
           semaphore
 

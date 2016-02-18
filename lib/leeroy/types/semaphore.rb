@@ -9,6 +9,10 @@ module Leeroy
       property :object
       property :payload, coerce: Leeroy::Types::PackedString
 
+      def to_s
+        "s3://#{self.bucket}/#{self.object}"
+      end
+
       def dump
         self.payload.extract
       end

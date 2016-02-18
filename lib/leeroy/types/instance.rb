@@ -2,6 +2,7 @@ require 'base64'
 
 require 'leeroy'
 require 'leeroy/types/dash'
+require 'leeroy/types/mash'
 require 'leeroy/helpers/logging'
 
 module Leeroy
@@ -24,7 +25,7 @@ module Leeroy
 
       def run_params
         begin
-          run_params = Hashie::Mash.new
+          run_params = Leeroy::Types::Mash.new
 
           [
             :iam_instance_profile,

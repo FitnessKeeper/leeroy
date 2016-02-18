@@ -1,6 +1,7 @@
 require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
+require 'leeroy/types/mash'
 
 module Leeroy
   module Task
@@ -46,7 +47,7 @@ module Leeroy
           createTags({'Name' => instance_name})
 
           # write semaphore
-          s3_object = buildS3ObjectName(instance_name, 'semaphores')
+          s3_object = buildS3ObjectName(instanceid, 'semaphores')
           payload = _readSemaphore(phase)
           semaphore = setSemaphore(s3_object, payload)
           self.state.semaphore = semaphore
@@ -92,7 +93,7 @@ module Leeroy
           logger.debug "generating params for creating an EC2 instance"
 
           # gather the necessary parameters
-          instance_params = Hashie::Mash.new
+          instance_params = Leeroy::Types::Mash.new
 
           instance_params.security_group_ids = Array(state.sgid)
           instance_params.subnet_id = state.subnetid

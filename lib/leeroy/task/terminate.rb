@@ -14,8 +14,24 @@ module Leeroy
           # destroy instance
           terminated = destroyInstance
 
-          if terminated.include?(self.state.instanceid)
-            logger.debug "clearing instanceid #{self.state.instanceid} from state"
+          instanceid = self.state.instanceid
+          if terminated.include?(instanceid)
+            # clean up semaphore if present
+            semaphore = self.state.semaphore
+
+            if semaphore.nil?
+              # guess at semaphore from instance ID
+              s3_object = buildS3ObjectName(instanceid, 'semaphores')
+              bucket = checkEnv('LEEROY_S3_BUCKET')
+              semaphore = Leeroy::Types::Semaphore.new(bucket: bucket, object: s3_object, payload: '')
+            end
+
+            unless semaphore.nil?
+              logger.debug "clearing semaphore #{semaphore}"
+              clearSemaphore(semaphore)
+            end
+
+            logger.debug "clearing instanceid #{instanceid} from state"
             self.state.instanceid = nil
           end
 
