@@ -14,19 +14,31 @@ module Leeroy
           phase = options[:phase]
 
           # resolve VPC ID
-          vpcname = checkEnv('LEEROY_BUILD_VPC')
-          vpcid = getVpcId(vpcname)
-          self.state.vpcid = vpcid
+          if self.state.vpcid?
+            vpcid = self.state.vpcid
+          else
+            vpcname = checkEnv('LEEROY_BUILD_VPC')
+            vpcid = getVpcId(vpcname)
+            self.state.vpcid = vpcid
+          end
 
           # resolve security group
-          sgname = checkEnv('LEEROY_BUILD_SECURITY_GROUP')
-          sgid = getSgId(sgname, vpcname, vpcid)
-          self.state.sgid = sgid
+          if self.state.sgid?
+            sgid = self.state.sgid
+          else
+            sgname = checkEnv('LEEROY_BUILD_SECURITY_GROUP')
+            sgid = getSgId(sgname, vpcname, vpcid)
+            self.state.sgid = sgid
+          end
 
           # resolve subnet
-          subnetname = checkEnv('LEEROY_BUILD_SUBNET')
-          subnetid = getSubnetId(subnetname, vpcid)
-          self.state.subnetid = subnetid
+          if self.state.subnetid?
+            subnetid = self.state.subnetid
+          else
+            subnetname = checkEnv('LEEROY_BUILD_SUBNET')
+            subnetid = getSubnetId(subnetname, vpcid)
+            self.state.subnetid = subnetid
+          end
 
           # create instance
           instance_params = _genInstanceParams

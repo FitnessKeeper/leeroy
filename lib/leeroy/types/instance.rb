@@ -1,14 +1,13 @@
 require 'base64'
 
 require 'leeroy'
-require 'leeroy/types/dash'
-require 'leeroy/types/mash'
+require 'leeroy/types/runnable'
+require 'leeroy/types/packedstring'
 require 'leeroy/helpers/logging'
 
 module Leeroy
   module Types
-    class Instance < Leeroy::Types::Dash
-      include Leeroy::Helpers::Logging
+    class Instance < Leeroy::Types::Runnable
 
       property :phase, required: true
 
@@ -23,32 +22,26 @@ module Leeroy
       property :subnet_id, required: true
       property :user_data, default: '', coerce: Leeroy::Types::PackedString
 
-      def run_params
-        begin
-          run_params = Leeroy::Types::Mash.new
+      def initialize(*args, &block)
+        super(*args, &block)
 
-          [
-            :iam_instance_profile,
-            :image_id,
-            :instance_type,
-            :key_name,
-            :max_count,
-            :min_count,
-            :security_group_ids,
-            :subnet_id,
-          ].map {|key| run_params.store(key.to_s, self.fetch(key))}
+        self.params = [
+          :iam_instance_profile,
+          :image_id,
+          :instance_type,
+          :key_name,
+          :max_count,
+          :min_count,
+          :security_group_ids,
+          :subnet_id,
+          :user_data,
+        ]
 
-          # user_data file depends on phase
-          user_data = self.user_data
-          run_params.user_data = Base64.urlsafe_encode64(user_data.extract)
+        self.retrievals = {
+          :user_data => lambda {|x,y| Base64.urlsafe_encode64(x.fetch(y).extract)}
+        }
 
-          logger.debug "run_params: #{run_params.inspect}"
-
-          run_params
-
-        rescue StandardError => e
-          raise e
-        end
+        self.command = :run_instances
       end
 
     end
