@@ -41,7 +41,10 @@ module Leeroy
           joined = lines.join
           logger.debug "joined: #{joined}"
 
-          MultiJson.load(joined, :symbolize_keys => true)
+          loaded = MultiJson.load(joined, :symbolize_keys => true)
+          logger.debug "loaded: #{loaded}"
+
+          loaded
 
         rescue StandardError => e
           raise e
@@ -50,7 +53,7 @@ module Leeroy
 
       def dump_state
         logger.debug "dumping state to stdout"
-        $stdout.puts MultiJson.dump(self.state)
+        $stdout.puts self.state.dump
       end
 
       def rotate_task_metadata

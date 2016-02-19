@@ -1,15 +1,19 @@
-require 'base64'
-
 require 'leeroy'
-require 'leeroy/types/runnable'
-require 'leeroy/types/packedstring'
+require 'leeroy/types/dash'
+require 'leeroy/types/mash'
+require 'leeroy/types/userdata'
+require 'leeroy/helpers/dumpable'
 require 'leeroy/helpers/logging'
 
 module Leeroy
   module Types
-    class Instance < Leeroy::Types::Runnable
+    class Instance < Leeroy::Types::Dash
+
+      include Leeroy::Helpers::Dumpable
+      include Leeroy::Helpers::Logging
 
       property :phase, required: true
+      property :aws_params
 
       # AWS-specific params
       property :iam_instance_profile, required: true
@@ -20,12 +24,10 @@ module Leeroy
       property :min_count, required: true
       property :security_group_ids, required: true
       property :subnet_id, required: true
-      property :user_data, default: '', coerce: Leeroy::Types::PackedString
+      property :user_data, default: '', coerce: Leeroy::Types::UserData
 
       def initialize(*args, &block)
-        super(*args, &block)
-
-        self.params = [
+        self.aws_params = [
           :iam_instance_profile,
           :image_id,
           :instance_type,
@@ -37,11 +39,26 @@ module Leeroy
           :user_data,
         ]
 
-        self.retrievals = {
-          :user_data => lambda {|x,y| Base64.urlsafe_encode64(x.fetch(y).extract)}
-        }
+        self.dump_properties = self.aws_params
 
-        self.command = :run_instances
+        super
+      end
+
+      def run_params
+        begin
+          params_hash = Leeroy::Types::Mash.new
+
+          self.aws_params.each {|param| params_hash.store(param.to_s, self.fetch(param.to_s))}
+
+          # UserData is special!
+
+          params_hash.store('user_data', self.fetch('user_data').encoded_for_ec2)
+
+          params_hash
+
+        rescue StandardError => e
+          raise e
+        end
       end
 
     end

@@ -31,6 +31,7 @@ module Leeroy
       def ec2Request(method, params = {}, ec2 = self.ec2, options = self.options, global_options = self.global_options)
         begin
           logger.debug "constructing EC2 request for '#{method}'"
+          logger.debug "params: #{params.inspect}"
 
           params_mash = Leeroy::Types::Mash.new(params)
           params = params_mash
@@ -130,68 +131,6 @@ module Leeroy
 
           logger.debug "subnetid: #{subnetid}"
           subnetid
-
-        rescue Aws::EC2::Errors::DryRunOperation => e
-          logger.info e.message
-          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
-
-        rescue StandardError => e
-          raise e
-        end
-      end
-
-      def createInstance(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
-        begin
-          logger.debug "creating an EC2 instance"
-
-          # gather the necessary parameters
-          instance_params = Leeroy::Types::Mash.new
-
-          instance_params.security_group_ids = Array(state.sgid)
-          instance_params.subnet_id = state.subnetid
-
-          instance_params.key_name = checkEnv('LEEROY_BUILD_SSH_KEYPAIR')
-          instance_params.instance_type = checkEnv('LEEROY_BUILD_INSTANCE_TYPE')
-
-          instance_params.min_count = 1
-          instance_params.max_count = 1
-
-          instance_params.store('iam_instance_profile', {:name =>  checkEnv('LEEROY_BUILD_PROFILE_NAME')})
-
-          # some parameters depend on phase
-          phase = options[:phase]
-          logger.debug "phase is #{phase}"
-
-          # AMI id depends on phase
-          if phase == 'gold_master'
-            image_id = checkEnv('LEEROY_AWS_LINUX_AMI')
-          elsif phase == 'application'
-            image_id = state.imageid
-          end
-
-          instance_params.phase = phase
-
-          raise "unable to determine image ID for phase '#{phase}'" if image_id.nil?
-
-          instance_params.image_id = image_id
-
-          # user_data file depends on phase
-          user_data = File.join(checkEnv('LEEROY_USER_DATA_PREFIX'), phase)
-          if File.readable?(user_data)
-            instance_params.user_data = IO.readlines(user_data).join('')
-          else
-            raise "You must provide a readable user data script at #{user_data}."
-          end
-
-          logger.debug "instance_params: #{instance_params.inspect}"
-
-          instance = Leeroy::Types::Instance.new(instance_params)
-
-          instance_id = instance.instantiate
-
-          state.instanceid = instanceid
-
-          instanceid
 
         rescue Aws::EC2::Errors::DryRunOperation => e
           logger.info e.message
@@ -359,7 +298,7 @@ module Leeroy
           # FIXME put the semaphore in S3
           run_params = Leeroy::Types::Mash.new
 
-          run_params.body = semaphore.dump
+          run_params.body = semaphore.payload
           run_params.bucket = bucket
           run_params.key = object
 

@@ -7,6 +7,7 @@ require 'leeroy/helpers/state'
 
 module Leeroy
   class State < Leeroy::Types::Dash
+    include Leeroy::Helpers::Dumpable
     include Leeroy::Helpers::Logging
     include Leeroy::Helpers::Polling
     include Leeroy::Helpers::State
@@ -21,7 +22,18 @@ module Leeroy
 
       rescue KeyError => e
         logger.debug e.message
-        self.send(:fetch, *args, &block)
+
+        not_found = args[0]
+        logger.warn "property '#{not_found}' not found in statedata, checking state"
+
+        begin
+          self.send(not_found.to_sym, &block)
+
+        rescue KeyError => e
+          logger.debug e.message
+
+          logger.warn "property '#{not_found}' not found in statedata or state"
+        end
 
       rescue StandardError => e
         raise e
@@ -44,5 +56,15 @@ module Leeroy
         raise e
       end
     end
+
+    def initialize(*args, &block)
+      super
+
+      self.dump_properties = [
+        :data,
+        :metadata,
+      ]
+    end
+
   end
 end
