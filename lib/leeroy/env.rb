@@ -2,11 +2,13 @@ require 'dotenv'
 Dotenv.load
 
 require 'leeroy/types/mash'
+require 'leeroy/helpers/dumpable'
 require 'leeroy/helpers/env'
 require 'leeroy/helpers/logging'
 
 module Leeroy
   class Env < Leeroy::Types::Mash
+    include Leeroy::Helpers::Dumpable
     include Leeroy::Helpers::Env
     include Leeroy::Helpers::Logging
 
@@ -23,7 +25,10 @@ module Leeroy
     def initialize(env = ENV)
       begin
         logger.debug "initializing #{self.class}"
-        super(_filter_env(env))
+        filtered = _filter_env(env)
+        logger.debug "filtered: #{filtered.inspect}"
+        self.dump_properties = filtered.keys.sort.collect { |x| x.to_sym }
+        super(filtered)
       rescue StandardError => e
         raise e
       end

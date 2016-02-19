@@ -13,6 +13,16 @@ module Leeroy
       property :previous, default: nil
       property :started, coerce: Proc.new { |t| Chronic.parse(t) }, default: 'now'
 
+      def initialize(*args, &block)
+        super
+
+        self.dump_properties = [
+          :task,
+          :previous,
+          :started,
+        ]
+      end
+
     end
   end
 end

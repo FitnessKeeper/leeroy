@@ -359,7 +359,7 @@ module Leeroy
           # FIXME put the semaphore in S3
           run_params = Leeroy::Types::Mash.new
 
-          run_params.body = semaphore.dump
+          run_params.body = semaphore.payload
           run_params.bucket = bucket
           run_params.key = object
 

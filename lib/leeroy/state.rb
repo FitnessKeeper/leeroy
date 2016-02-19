@@ -44,5 +44,15 @@ module Leeroy
         raise e
       end
     end
+
+    def dumpable
+      begin
+        Leeroy::State.new(data: self.data.dumpable, metadata: self.metadata.dumpable)
+
+      rescue StandardError => e
+        raise e
+      end
+    end
+
   end
 end

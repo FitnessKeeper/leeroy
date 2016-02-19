@@ -50,7 +50,7 @@ module Leeroy
 
       def dump_state
         logger.debug "dumping state to stdout"
-        $stdout.puts MultiJson.dump(self.state)
+        $stdout.puts self.state.dump
       end
 
       def rotate_task_metadata
