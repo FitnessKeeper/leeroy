@@ -21,9 +21,6 @@ module Leeroy
     program_desc 'Automate tasks with Jenkins'
 
     # global options
-    desc 'Use in a pipeline (read state from stdin).'
-    switch [:p, :pipe]
-
     desc "Perform the requested task (pass '--no-op' for testing)."
     switch [:op], :default_value => true
 

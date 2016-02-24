@@ -13,35 +13,12 @@ module Leeroy
 
           phase = options[:phase]
 
-          # resolve VPC ID
-          if self.state.vpcid?
-            vpcid = self.state.vpcid
-          else
-            vpcname = checkEnv('LEEROY_BUILD_VPC')
-            vpcid = getVpcId(vpcname)
-            self.state.vpcid = vpcid
-          end
-
-          # resolve security group
-          if self.state.sgid?
-            sgid = self.state.sgid
-          else
-            sgname = checkEnv('LEEROY_BUILD_SECURITY_GROUP')
-            sgid = getSgId(sgname, vpcname, vpcid)
-            self.state.sgid = sgid
-          end
-
-          # resolve subnet
-          if self.state.subnetid?
-            subnetid = self.state.subnetid
-          else
-            subnetname = checkEnv('LEEROY_BUILD_SUBNET')
-            subnetid = getSubnetId(subnetname, vpcid)
-            self.state.subnetid = subnetid
-          end
+          # resolve various AWS resources from human-readable inputs
+          _resolveResources
 
           # create instance
           instance_params = _genInstanceParams
+
           instance = Leeroy::Types::Instance.new(instance_params)
           resp = ec2Request(:run_instances, instance.run_params)
           instanceid = resp.instances[0].instance_id
@@ -93,6 +70,40 @@ module Leeroy
           end
 
           rendered
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def _resolveResources(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+        begin
+          # resolve VPC ID
+          if state.vpcid?
+            vpcid = state.vpcid
+          else
+            vpcname = checkEnv('LEEROY_BUILD_VPC')
+            vpcid = getVpcId(vpcname)
+            state.vpcid = vpcid
+          end
+
+          # resolve security group
+          if state.sgid?
+            sgid = state.sgid
+          else
+            sgname = checkEnv('LEEROY_BUILD_SECURITY_GROUP')
+            sgid = getSgId(sgname, vpcname, vpcid)
+            state.sgid = sgid
+          end
+
+          # resolve subnet
+          if state.subnetid?
+            subnetid = state.subnetid
+          else
+            subnetname = checkEnv('LEEROY_BUILD_SUBNET')
+            subnetid = getSubnetId(subnetname, vpcid)
+            state.subnetid = subnetid
+          end
 
         rescue StandardError => e
           raise e

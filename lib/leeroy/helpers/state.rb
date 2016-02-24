@@ -1,4 +1,4 @@
-require 'hashie'
+require 'fcntl'
 require 'multi_json'
 
 require 'leeroy/helpers'
@@ -12,14 +12,7 @@ module Leeroy
 
       def state_from_pipe(state = {}, global_options = self.global_options)
         begin
-          if global_options.fetch(:pipe, false)
-            logger.debug "running in pipe mode"
-            state = state.merge(load_state)
-          else
-            logger.debug "not running in pipe mode"
-          end
-
-          state
+          state.merge(load_state)
 
         rescue StandardError => e
           raise e
@@ -28,23 +21,9 @@ module Leeroy
 
       def load_state
         begin
-          logger.debug "loading state from stdin"
-          lines = []
+          logger.debug "loading state from stdin if available"
 
-          while line = $stdin.gets do
-            line.chomp!
-            logger.debug "line: #{line}"
-            lines.push(line)
-            logger.debug "lines: #{lines.to_s}"
-          end
-
-          joined = lines.join
-          logger.debug "joined: #{joined}"
-
-          loaded = MultiJson.load(joined, :symbolize_keys => true)
-          logger.debug "loaded: #{loaded}"
-
-          loaded
+          _stdin? ?  MultiJson.load($stdin.read, :symbolize_keys => true) : {}
 
         rescue StandardError => e
           raise e
@@ -67,6 +46,14 @@ module Leeroy
       def to_s
         "#{self.metadata},#{self.data}"
       end
+
+      private
+
+      # this is preposterous BS and doubtless not portable to Windows
+      def _stdin?
+        $stdin.fcntl(Fcntl::F_GETFL, 0) == 0
+      end
+
     end
   end
 end
