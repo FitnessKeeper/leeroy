@@ -1,6 +1,7 @@
 require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
+require 'leeroy/helpers/env'
 
 module Leeroy
   module Task
@@ -12,12 +13,30 @@ module Leeroy
           super(args, options, global_options)
 
           # create image
-          imageid = createImage
+          image_params = _genImageParams
+
           self.state.imageid = imageid
 
           dump_state
 
           logger.debug "done performing for #{self.class}"
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      private
+
+      def _genImageParams(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+        begin
+          logger.debug "generating params for creating an EC2 image"
+
+          image_params = Leeroy::Types::Mash.new
+
+          image_params.instance_id = state.instanceid
+
+          # were we given an app_name?
 
         rescue StandardError => e
           raise e

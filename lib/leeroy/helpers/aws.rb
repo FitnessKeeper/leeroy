@@ -168,18 +168,6 @@ module Leeroy
       end
 
 
-      def createImage(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
-        begin
-
-        rescue Aws::EC2::Errors::DryRunOperation => e
-          logger.info e.message
-          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
-
-        rescue StandardError => e
-          raise e
-        end
-      end
-
       def createTags(tags = {}, resourceids = [], state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
         begin
           if resourceids.length == 0

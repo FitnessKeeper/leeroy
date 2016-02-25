@@ -75,10 +75,23 @@ module Leeroy
       c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
       c.flag [:p, :phase], :must_match => valid_phase
 
+      c.desc "Image index (optional, will be calculated if not provided)."
+      c.flag [:i, :index]
+
       c.action do |global_options,options,args|
         # validate input
         if options[:phase].nil?
           help_now! "You must pass an argument for '--phase'."
+        end
+
+        # index must be nil or must look like a positive integer
+        begin
+          unless options[:index].nil? or options[:index].to_i > 0
+            help_now! "The argument for '--index' must be a positive integer."
+          end
+
+        rescue NoMethodError => e
+          help_now! "The argument for '--index' must be a positive integer."
         end
 
         task = Leeroy::Task::Image.new(global_options: global_options, options: options, args: args)
