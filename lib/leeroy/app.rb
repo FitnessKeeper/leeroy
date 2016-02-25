@@ -73,14 +73,14 @@ module Leeroy
 
       valid_phase = VALID_PHASE
       c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
-      c.flag [:p, :phase], :must_match => valid_phase
+      c.flag [:p, :phase]
 
       c.desc "Image index (optional, will be calculated if not provided)."
       c.flag [:i, :index]
 
       c.action do |global_options,options,args|
         # validate input
-        if options[:phase].nil?
+        unless options[:phase].nil? or valid_phase.include?(options[:phase])
           help_now! "You must pass an argument for '--phase'."
         end
 
