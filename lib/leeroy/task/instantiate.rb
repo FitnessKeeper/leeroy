@@ -11,7 +11,7 @@ module Leeroy
         begin
           super(args, options, global_options)
 
-          phase = options[:phase]
+          phase = self.state.fetch('phase', options[:phase])
 
           # resolve various AWS resources from human-readable inputs
           _resolveResources

@@ -47,8 +47,8 @@ module Leeroy
 
       c.action do |global_options,options,args|
         # validate input
-        if options[:phase].nil?
-          help_now! "You must pass an argument for '--phase'."
+        unless options[:phase].nil? or valid_phase.include?(options[:phase])
+          help_now! "Valid arguments for '--phase' are: #{valid_phase.sort.join(',')}."
         end
 
         task = Leeroy::Task::Instantiate.new(global_options: global_options, options: options, args: args)
@@ -81,7 +81,7 @@ module Leeroy
       c.action do |global_options,options,args|
         # validate input
         unless options[:phase].nil? or valid_phase.include?(options[:phase])
-          help_now! "You must pass an argument for '--phase'."
+          help_now! "Valid arguments for '--phase' are: #{valid_phase.sort.join(',')}."
         end
 
         # index must be nil or must look like a positive integer

@@ -12,6 +12,8 @@ module Leeroy
         begin
           super(args, options, global_options)
 
+          phase = self.state.fetch('phase', options[:phase])
+
           # create image
           image_params = _genImageParams
 
