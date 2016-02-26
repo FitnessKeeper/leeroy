@@ -4,6 +4,7 @@ require 'leeroy/helpers/dumpable'
 require 'leeroy/helpers/logging'
 require 'leeroy/types/dash'
 require 'leeroy/types/mash'
+require 'leeroy/types/phase'
 require 'leeroy/types/semaphore'
 
 module Leeroy

@@ -15,7 +15,7 @@ module Leeroy
       property :aws_params
 
       # AWS-specific params
-      property :image_id, required: true
+      property :instance_id, required: true
       property :name, required: true
 
       def initialize(*args, &block)
@@ -45,7 +45,7 @@ module Leeroy
       end
 
       def to_s
-        self.image_id
+        self.instance_id
       end
 
     end

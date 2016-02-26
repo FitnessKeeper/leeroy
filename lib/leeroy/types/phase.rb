@@ -8,7 +8,7 @@ module Leeroy
           super
 
           phase = self.to_s
-          raise "invalid value for phase: '#{phase}'" unless VALID_PHASE.include(phase)
+          raise "invalid value for phase: '#{phase}'" unless VALID_PHASE.include?(phase)
 
         rescue StandardError => e
           raise e

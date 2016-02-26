@@ -47,6 +47,8 @@ module Leeroy
 
           image_params = Leeroy::Types::Mash.new
 
+          image_params.phase = phase
+
           # get instance_id from state or options
           instance_id = state.instanceid? ? state.instanceid : options[:instance]
           raise "Unable to determine instance ID, exiting." if instance_id.nil?
