@@ -14,11 +14,14 @@ module Leeroy
           super(args, options, global_options)
 
           phase = self.state.fetch('phase', options[:phase])
+          unless ['gold_master', 'application'].include?(phase)
+            raise "invalid value for phase: '#{phase}'"
+          end
 
           # create image
-          image_params = _genImageParams
+          image_params = _genImageParams(phase)
 
-          exit
+          logger.debug "image_params: #{image_params.inspect}"
 
           self.state.imageid = imageid
 
@@ -33,7 +36,7 @@ module Leeroy
 
       private
 
-      def _genImageParams(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+      def _genImageParams(phase, state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
         begin
           logger.debug "generating params for creating an EC2 image"
 
@@ -48,6 +51,28 @@ module Leeroy
           # were we given an app_name?
           app_name = state.app_name? ? state.app_name : checkEnv('LEEROY_APP_NAME')
           logger.debug "app_name: #{app_name}"
+
+          # were we given an image index?
+          index = _genImageIndex(state, env, ec2, options).to_s
+          logger.debug "index: #{index}"
+
+          # build target depends on phase
+          build_target = phase == 'gold_master' ? 'master' : checkEnv('LEEROY_BUILD_TARGET')
+
+          image_params.name = [app_name, build_target, index].join('-')
+
+          image_params
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def _genImageIndex(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+        begin
+          logger.debug "determining gold master instance ID"
+
+          options[:index] or getGoldMasterImageIndex
 
         rescue StandardError => e
           raise e

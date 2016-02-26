@@ -239,6 +239,29 @@ module Leeroy
 
       end
 
+      def getGoldMasterImageIndex(env_prefix = 'LEEROY_GOLD_MASTER_IMAGE_PREFIX')
+        name_prefix = checkEnv(env_prefix)
+        logger.debug "name_prefix: #{name_prefix}"
+
+        # determine the index by looking at existing images
+        selector = lambda {|image| image.name =~ /^#{name_prefix}/}
+        # and extract the names
+        collector = lambda {|image| image.name}
+
+        image_names = filterImages(selector, collector)
+        image_numbers = image_names.collect do |name|
+          if name =~ /(\d+)$/
+            image_number = $1.to_i
+          end
+        end
+
+        latest_image = image_numbers.sort.compact.uniq.pop
+        logger.debug "latest_image: #{latest_image}"
+
+        latest_image
+
+      end
+
       # S3
 
       def s3Request(method, params = {}, s3 = self.s3, options = self.options, global_options = self.global_options)
@@ -283,7 +306,6 @@ module Leeroy
           semaphore = Leeroy::Types::Semaphore.new(bucket: bucket, object: object, payload: payload)
           logger.debug "semaphore: #{semaphore}"
 
-          # FIXME put the semaphore in S3
           run_params = Leeroy::Types::Mash.new
 
           run_params.body = semaphore.payload

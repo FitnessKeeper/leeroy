@@ -13,20 +13,22 @@ module Leeroy
       include Leeroy::Helpers::Dumpable
 
       property :message, coerce: String
-      property :instanceid
-      property :imageid
+      property :app_name, coerce: String
+      property :instanceid, coerce: String
+      property :imageid, coerce: String
       property :semaphore, coerce: Leeroy::Types::Semaphore
-      property :sgid
-      property :subnetid
-      property :vpcid
+      property :sgid, coerce: String
+      property :subnetid, coerce: String
+      property :vpcid, coerce: String
 
       def initialize(*args, &block)
         super
 
         self.dump_properties = [
-          :message,
-          :instanceid,
+          :app_name,
           :imageid,
+          :instanceid,
+          :message,
           :semaphore,
           :sgid,
           :subnetid,
