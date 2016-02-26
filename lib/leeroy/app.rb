@@ -75,8 +75,11 @@ module Leeroy
       c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
       c.flag [:p, :phase]
 
+      c.desc "Instance ID from which to image (optional, will be extracted from state if not provided)."
+      c.flag [:i, :instance]
+
       c.desc "Image index (optional, will be calculated if not provided)."
-      c.flag [:i, :index]
+      c.flag [:n, :index]
 
       c.action do |global_options,options,args|
         # validate input

@@ -2,6 +2,7 @@ require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
 require 'leeroy/helpers/env'
+require 'leeroy/types/image'
 
 module Leeroy
   module Task
@@ -16,6 +17,8 @@ module Leeroy
 
           # create image
           image_params = _genImageParams
+
+          exit
 
           self.state.imageid = imageid
 
@@ -36,9 +39,15 @@ module Leeroy
 
           image_params = Leeroy::Types::Mash.new
 
-          image_params.instance_id = state.instanceid
+          # get instance_id from state or options
+          instance_id = state.instanceid? ? state.instanceid : options[:instance]
+          raise "Unable to determine instance ID, exiting." if instance_id.nil?
+          logger.debug "instance_id: #{instance_id}"
+          image_params.instance_id = instance_id
 
           # were we given an app_name?
+          app_name = state.app_name? ? state.app_name : checkEnv('LEEROY_APP_NAME')
+          logger.debug "app_name: #{app_name}"
 
         rescue StandardError => e
           raise e
