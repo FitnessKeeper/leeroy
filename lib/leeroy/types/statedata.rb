@@ -16,6 +16,7 @@ module Leeroy
       property :app_name, coerce: String
       property :instanceid, coerce: String
       property :imageid, coerce: String
+      property :phase, coerce: Leeroy::Types::Phase
       property :semaphore, coerce: Leeroy::Types::Semaphore
       property :sgid, coerce: String
       property :subnetid, coerce: String
@@ -29,6 +30,7 @@ module Leeroy
           :imageid,
           :instanceid,
           :message,
+          :phase,
           :semaphore,
           :sgid,
           :subnetid,

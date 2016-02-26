@@ -11,10 +11,8 @@ module Leeroy
         begin
           super(args, options, global_options)
 
-          phase = self.state.fetch('phase', options[:phase])
-          unless ['gold_master', 'application'].include?(phase)
-            raise "invalid value for phase: '#{phase}'"
-          end
+          phase = Leeroy::Types::Phase.new(self.state.fetch('phase', options[:phase]))
+          self.state.phase = phase
 
           # resolve various AWS resources from human-readable inputs
           _resolveResources

@@ -3,6 +3,7 @@ require 'leeroy/task'
 require 'leeroy/helpers/aws'
 require 'leeroy/helpers/env'
 require 'leeroy/types/image'
+require 'leeroy/types/phase'
 
 module Leeroy
   module Task
@@ -13,10 +14,8 @@ module Leeroy
         begin
           super(args, options, global_options)
 
-          phase = self.state.fetch('phase', options[:phase])
-          unless ['gold_master', 'application'].include?(phase)
-            raise "invalid value for phase: '#{phase}'"
-          end
+          phase = Leeroy::Types::Phase.new(self.state.fetch('phase', options[:phase]))
+          self.state.phase = phase
 
           # create image
           image_params = _genImageParams(phase)

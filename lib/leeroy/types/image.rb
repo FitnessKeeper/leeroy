@@ -1,6 +1,7 @@
 require 'leeroy'
 require 'leeroy/types/dash'
 require 'leeroy/types/mash'
+require 'leeroy/types/phase'
 require 'leeroy/helpers/dumpable'
 require 'leeroy/helpers/logging'
 
@@ -10,7 +11,7 @@ module Leeroy
       include Leeroy::Helpers::Dumpable
       include Leeroy::Helpers::Logging
 
-      property :phase, required: true
+      property :phase, required: true, coerce: Leeroy::Types::Phase
       property :aws_params
 
       # AWS-specific params
