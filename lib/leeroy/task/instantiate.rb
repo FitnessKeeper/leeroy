@@ -12,26 +12,21 @@ module Leeroy
           super(args, options, global_options)
 
           phase = self.state.fetch('phase', options[:phase])
+          unless ['gold_master', 'application'].include?(phase)
+            raise "invalid value for phase: '#{phase}'"
+          end
 
           # resolve various AWS resources from human-readable inputs
           _resolveResources
 
           # create instance
-          instance_params = _genInstanceParams
-
-          instance = Leeroy::Types::Instance.new(instance_params)
+          instance = Leeroy::Types::Instance.new(_genInstanceParams)
           resp = ec2Request(:run_instances, instance.run_params)
           instanceid = resp.instances[0].instance_id
           self.state.instanceid = instanceid
 
           # tag instance
-          if phase == 'gold_master'
-            instance_name = getGoldMasterInstanceName
-          elsif phase == 'application'
-            instance_name = getApplicationInstanceName
-          else
-            raise "unable to determine instance name for phase '#{phase}'"
-          end
+          instance_name = phase == 'gold_master' ? getGoldMasterInstanceName : getApplicationInstanceName
           createTags({'Name' => instance_name})
 
           # write semaphore

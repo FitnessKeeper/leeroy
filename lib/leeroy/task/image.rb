@@ -23,6 +23,12 @@ module Leeroy
 
           logger.debug "image_params: #{image_params.inspect}"
 
+          image = Leeroy::Types::Image.new(image_params)
+          resp = ec2Request(:create_image, image.run_params)
+
+          imageid = resp.image_id
+          logger.debug "imageid: #{imageid}"
+
           self.state.imageid = imageid
 
           dump_state
