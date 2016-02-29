@@ -29,6 +29,7 @@ module Leeroy
         logger.debug "filtered: #{filtered.inspect}"
         self.dump_properties = filtered.keys.sort.collect { |x| x.to_sym }
         super(filtered)
+
       rescue StandardError => e
         raise e
       end

@@ -30,7 +30,7 @@ module Leeroy
           # write semaphore
           s3_object = buildS3ObjectName(instanceid, 'semaphores')
           payload = _readSemaphore(phase)
-          semaphore = setSemaphore(s3_object, payload)
+          semaphore = setSemaphore(genSemaphore(s3_object, payload))
           self.state.semaphore = semaphore
 
           dump_state

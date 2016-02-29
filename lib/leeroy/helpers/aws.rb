@@ -299,18 +299,33 @@ module Leeroy
         end
       end
 
-      def setSemaphore(object, payload = '', bucket = checkEnv('LEEROY_S3_BUCKET'))
+      def genSemaphore(object, payload = '', bucket = checkEnv('LEEROY_S3_BUCKET'))
         begin
-          logger.debug "setting a semaphore"
+          logger.debug "creating a semaphore"
 
           semaphore = Leeroy::Types::Semaphore.new(bucket: bucket, object: object, payload: payload)
           logger.debug "semaphore: #{semaphore}"
 
+          semaphore
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def setSemaphore(semaphore)
+        begin
+          unless semaphore.kind_of?(Leeroy::Types::Semaphore)
+            semaphore = Leeroy::Types::Semaphore.new(semaphore)
+          end
+
+          logger.debug "setting a semaphore"
+
           run_params = Leeroy::Types::Mash.new
 
           run_params.body = semaphore.payload
-          run_params.bucket = bucket
-          run_params.key = object
+          run_params.bucket = semaphore.bucket
+          run_params.key = semaphore.object
 
           resp = s3Request(:put_object, run_params)
 
@@ -322,6 +337,38 @@ module Leeroy
       end
 
       def clearSemaphore(semaphore)
+        begin
+          logger.debug "semaphore.class: #{semaphore.class}"
+
+          if semaphore.kind_of?(Leeroy::Types::Semaphore)
+            logger.debug "received a semaphore, continuing"
+          else
+            logger.debug "did not receive a semaphore, initializing"
+            semaphore = Leeroy::Types::Semaphore.new(semaphore)
+          end
+
+          run_params = Leeroy::Types::Mash.new
+          run_params.bucket = semaphore.bucket
+          run_params.key = semaphore.object
+
+          # is the object present in S3?
+          resp = checkSemaphore(semaphore)
+
+          if checkSemaphore(semaphore)
+            logger.debug "#{semaphore} present, deleting"
+            resp = s3Request(:delete_object, run_params)
+          else
+            logger.debug "#{semaphore} not present, continuing"
+          end
+
+          semaphore
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def checkSemaphore(semaphore)
         begin
           unless semaphore.kind_of?(Leeroy::Types::Semaphore)
             semaphore = Leeroy::Types::Semaphore.new(semaphore)
@@ -335,14 +382,16 @@ module Leeroy
           logger.debug "checking for presence of #{semaphore}"
           resp = s3Request(:head_object, run_params)
 
-          if resp.delete_marker
-            logger.debug "#{semaphore} not present, continuing"
+          if resp.delete_marker.nil?
+            resp
           else
-            logger.debug "#{semaphore} present, deleting"
-            resp = s3Request(:delete_object, run_params)
+            logger.debug "#{semaphore} already deleted"
+            nil
           end
 
-          semaphore
+        rescue Aws::S3::Errors::NotFound => e
+          logger.debug "#{semaphore} not found"
+          nil
 
         rescue StandardError => e
           raise e

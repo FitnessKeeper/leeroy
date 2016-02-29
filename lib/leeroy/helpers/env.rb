@@ -28,6 +28,10 @@ module Leeroy
             raise errmsg
           end
 
+        rescue NoMethodError => e
+          logger.error "unable to read environment! env: #{env.inspect}"
+          raise e
+
         rescue StandardError => e
           raise e
         end

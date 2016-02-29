@@ -6,6 +6,7 @@ require 'gli'
 require 'leeroy'
 require 'leeroy/task/image'
 require 'leeroy/task/instantiate'
+require 'leeroy/task/poll_instance'
 require 'leeroy/task/terminate'
 require 'leeroy/task/sleep'
 require 'leeroy/task/stub'
@@ -102,10 +103,21 @@ module Leeroy
       end
     end
 
+    desc "Polls S3 for a semaphore and waits until the semaphore is absent."
+    command :wait do |c|
+      c.desc "Instance ID of semaphore to check (optional, extracted from state if none provided)."
+      c.flag [:i, :instance]
+
+      c.action do |global_options,options,args|
+        Leeroy::Task::PollInstance.new(global_options: global_options, options: options, args: args).perform
+      end
+    end
+
     desc "Sleeps for some number of seconds."
     command :sleep do |c|
       c.desc "Number of seconds to sleep."
       c.flag [:i, :interval], :default_value => 2
+
       c.action do |global_options,options,args|
         Leeroy::Task::Sleep.new(global_options: global_options, options: options, args: args).perform
       end
