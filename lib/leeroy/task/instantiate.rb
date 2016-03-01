@@ -1,11 +1,13 @@
 require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
+require 'leeroy/helpers/polling'
 
 module Leeroy
   module Task
     class Instantiate < Leeroy::Task::Base
       include Leeroy::Helpers::AWS
+      include Leeroy::Helpers::Polling
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)
         begin
@@ -23,6 +25,10 @@ module Leeroy
           instanceid = resp.instances[0].instance_id
           self.state.instanceid = instanceid
 
+          # wait until instance is starting
+          _prepInstanceCreationPolling
+          poll(instanceid)
+
           # tag instance
           instance_name = phase == 'gold_master' ? getGoldMasterInstanceName : getApplicationInstanceName
           createTags({'Name' => instance_name})
@@ -33,6 +39,10 @@ module Leeroy
           semaphore = setSemaphore(genSemaphore(s3_object, payload))
           self.state.semaphore = semaphore
 
+          # wait until instance is done provisioning
+          _prepInstanceProvisionPolling
+          poll(semaphore)
+
           dump_state
 
           logger.debug "done performing for #{self.class}"
@@ -42,7 +52,38 @@ module Leeroy
         end
       end
 
+      def initialize(*args, &block)
+        super
+
+      end
+
       private
+
+      def _prepInstanceCreationPolling
+        # poll to make sure instance is created
+        self.poll_callback = lambda do |instanceid|
+          begin
+            run_params = { :instance_ids => [instanceid] }
+            resp = ec2Request(:describe_instances, run_params)
+
+          rescue Aws::EC2::Errors::InvalidInstanceIDNotFound => e
+            logger.debug "instance #{instanceid} not found"
+            nil
+          rescue StandardError => e
+            raise e
+          end
+        end
+
+        self.poll_timeout = 30
+        self.poll_interval = 2
+      end
+
+      def _prepInstanceProvisionPolling
+        # poll until semaphore has been removed
+        self.poll_callback = lambda {|s| checkSemaphore(s).nil?}
+        self.poll_timeout = checkEnv('LEEROY_POLL_TIMEOUT').to_i
+        self.poll_interval = checkEnv('LEEROY_POLL_INTERVAL').to_i
+      end
 
       def _readSemaphore(phase)
         begin

@@ -1,7 +1,7 @@
 require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
-require 'leeroy/helpers/env'
+require 'leeroy/helpers/polling'
 require 'leeroy/types/image'
 require 'leeroy/types/phase'
 
@@ -9,6 +9,7 @@ module Leeroy
   module Task
     class Image < Leeroy::Task::Base
       include Leeroy::Helpers::AWS
+      include Leeroy::Helpers::Polling
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)
         begin
@@ -30,6 +31,9 @@ module Leeroy
 
           self.state.imageid = imageid
 
+          _prepImageCreationPolling
+          poll(imageid)
+
           dump_state
 
           logger.debug "done performing for #{self.class}"
@@ -40,6 +44,37 @@ module Leeroy
       end
 
       private
+
+      def _prepImageCreationPolling
+        # poll to make sure image is created
+        self.poll_callback = lambda do |imageid|
+          begin
+            run_params = { :image_ids => [imageid], :owners => ['self'] }
+            resp = ec2Request(:describe_images, run_params)
+
+            state = resp.images[0].state
+
+            if state == 'pending'
+              logger.debug "image #{imageid} still pending"
+              nil
+            elsif state == 'available'
+              logger.debug "image #{imageid} available"
+              imageid
+            else
+              raise "image creation failed: #{resp.images[0].state_reason.message}"
+            end
+
+          rescue Aws::EC2::Errors::InvalidAMIIDNotFound => e
+            logger.debug "instance #{instanceid} not found"
+            nil
+          rescue StandardError => e
+            raise e
+          end
+        end
+
+        self.poll_timeout = checkEnv('LEEROY_POLL_TIMEOUT').to_i
+        self.poll_interval = checkEnv('LEEROY_POLL_INTERVAL').to_i
+      end
 
       def _genImageParams(phase, state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
         begin
@@ -79,7 +114,7 @@ module Leeroy
         begin
           logger.debug "determining gold master instance ID"
 
-          options[:index] or getGoldMasterImageIndex
+          options[:index] or getGoldMasterImageIndex.to_i + 1
 
         rescue StandardError => e
           raise e
