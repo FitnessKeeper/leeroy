@@ -30,7 +30,6 @@ module Leeroy
           logger.debug "polling every #{interval} seconds for #{timeout} seconds"
 
           SmartPolling.poll(timeout: timeout, interval: interval) do
-            logger.debug "polling"
             poll_arg = args[0]
             logger.debug "poll_arg: #{poll_arg.inspect}"
             self.poll_response = callback.call(poll_arg)
