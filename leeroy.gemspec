@@ -38,4 +38,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "rugged", "~> 0.23"
   spec.add_runtime_dependency "smart_polling", "~> 1.0"
   spec.add_runtime_dependency "yell", "~> 2.0"
+  spec.add_runtime_dependency "yell-adapters-syslog", "~> 2.0"
 end

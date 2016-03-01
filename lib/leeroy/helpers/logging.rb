@@ -1,4 +1,5 @@
 require 'yell'
+require 'yell-adapters-syslog'
 
 require 'leeroy/helpers'
 require 'leeroy/helpers/env'
@@ -9,11 +10,18 @@ module Leeroy
       include Leeroy::Helpers
 
       # constants
-      Trace_Format = '%d [%5L] %p (%M): %m'
-      Trace_Levels = [:debug]
+      TRUNCATE_THRESHOLD = 60
+
+      TRACE_FORMAT = "%d [%5L] %p (%M): %m"
+      TRACE_LEVELS = [:debug]
 
       # define a logger
-      Yell.new :stderr, name: self.class.to_s, format: Trace_Format, trace: Trace_Levels, level: :debug
+      # Yell.new :stderr, name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :debug
+      if ENV['ENVIRONMENT'] == 'production'
+        Yell.new :syslog, name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :info
+      else
+        Yell.new :stderr, name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :debug
+      end
 
       # make this class loggable
       self.class.send :include, Yell::Loggable
