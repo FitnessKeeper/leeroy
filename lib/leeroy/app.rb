@@ -32,8 +32,11 @@ module Leeroy
 
     desc "Displays leeroy's environment settings."
     command :env do |c|
+      c.desc "Format environment settings for use in .profile."
+      c.switch :profile, :p
+
       c.action do |global_options,options,args|
-        puts Leeroy::Env.new.to_s
+        puts Leeroy::Env.new(options).to_s
       end
     end
 

@@ -22,9 +22,14 @@ module Leeroy
       :tests      => 'tests',
     }
 
-    def initialize(env = ENV)
+    attr_reader :profile
+
+    def initialize(options = {}, env = ENV)
       begin
         logger.debug "initializing #{self.class}"
+
+        @profile = options[:profile]
+
         filtered = _filterEnv(env)
         logger.debug "filtered: #{filtered.inspect}"
         self.dump_properties = filtered.keys.sort.collect { |x| x.to_sym }
@@ -42,7 +47,19 @@ module Leeroy
     private
 
     def _prettyPrint
-      self.dump_properties.collect {|x| x.to_s}.sort.collect {|x| sprintf('%s=%s', x, self.fetch(x))}.join("\n")
+      if self.profile
+        formatstr = 'export %s=%s'
+        header = '# environment variables for leeroy configuration'
+      else
+        formatstr = '%s=%s'
+        header = nil
+      end
+
+      properties = self.dump_properties.collect {|x| x.to_s}.sort.collect {|x| sprintf(formatstr, x, self.fetch(x))}
+
+      properties.unshift(header) unless header.nil?
+
+      properties.join("\n")
     end
 
     def _filterEnv(env, prefix = 'LEEROY_')

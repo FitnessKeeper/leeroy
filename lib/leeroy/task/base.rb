@@ -35,7 +35,7 @@ module Leeroy
           logger.debug("args: #{self.args.to_s}")
 
           logger.debug("setting env")
-          @env = Leeroy::Env.new(params.fetch(:env, ENV))
+          @env = Leeroy::Env.new({}, params.fetch(:env, ENV))
           logger.debug("env: #{self.env.to_s}")
 
           logger.debug("setting state")
