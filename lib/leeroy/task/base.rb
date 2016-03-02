@@ -20,9 +20,6 @@ module Leeroy
 
       def initialize(params = {})
         begin
-          logger.debug("initializing #{self.class.to_s}")
-
-          logger.debug("setting global_options")
           @global_options = params.fetch(:global_options, {})
           logger.debug("global_options: #{self.global_options.to_s}")
 
@@ -51,9 +48,10 @@ module Leeroy
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)
         begin
-          self.logger.debug("performing #{self.class.to_s}")
+          self.logger.info("performing #{self.class.to_s}")
           self.logger.debug("args: #{args.inspect}")
           self.logger.debug("options: #{options.inspect}")
+
         rescue StandardError => e
           raise e
         end

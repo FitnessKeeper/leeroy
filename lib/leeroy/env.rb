@@ -41,6 +41,12 @@ module Leeroy
       'LEEROY_PROVISIONING_TEMPLATE_PREFIX' => '<path on local filesystem to directory containing user-data templates>',
     }
 
+    ENV_EXTRAS = {
+      'ENVIRONMENT' => '<development or production>',
+      'GLI_DEBUG' => '<true or false>',
+      'AWS_REGION' => '<your AWS region>',
+    }
+
     # attr_reader :default, :profile
     attr_reader :profile, :defaults
 
@@ -52,8 +58,15 @@ module Leeroy
         @defaults = options[:default]
         @profile = options[:profile]
 
-        unfiltered = self.defaults ? ENV_DEFAULTS : env
-        filtered = _filterEnv(unfiltered)
+        if self.defaults
+          unfiltered = ENV_DEFAULTS
+          extras = ENV_EXTRAS
+        else
+          unfiltered = env
+          extras = {}
+        end
+
+        filtered = _filterEnv(unfiltered).merge(extras)
         logger.debug "filtered: #{filtered.inspect}"
 
         self.dump_properties = filtered.keys.sort.collect { |x| x.to_sym }

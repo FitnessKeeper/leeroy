@@ -18,7 +18,7 @@ module Leeroy
       # define a logger
       # Yell.new :stderr, name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :debug
       if ENV['ENVIRONMENT'] == 'production'
-        Yell.new :syslog, name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :info
+        Yell.new :syslog, name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :info, facility: :user
       else
         Yell.new :stderr, name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :debug
       end
