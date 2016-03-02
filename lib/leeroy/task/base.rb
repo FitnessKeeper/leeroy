@@ -21,26 +21,14 @@ module Leeroy
       def initialize(params = {})
         begin
           @global_options = params.fetch(:global_options, {})
-          logger.debug("global_options: #{self.global_options.to_s}")
-
-          logger.debug("setting options")
           @options = params.fetch(:options, {})
-          logger.debug("options: #{self.options.to_s}")
-
-          logger.debug("setting args")
           @args = params.fetch(:args, {})
-          logger.debug("args: #{self.args.to_s}")
 
-          logger.debug("setting env")
           @env = Leeroy::Env.new({}, params.fetch(:env, ENV))
-          logger.debug("env: #{self.env.to_s}")
 
-          logger.debug("setting state")
           @state = Leeroy::State.new(state_from_pipe(params.fetch(:state, {})))
           rotate_task_metadata
-          logger.debug("state: #{self.state}")
 
-          logger.debug("base initialization of #{self.class.to_s} complete")
         rescue StandardError => e
           raise e
         end
@@ -51,6 +39,7 @@ module Leeroy
           self.logger.info("performing #{self.class.to_s}")
           self.logger.debug("args: #{args.inspect}")
           self.logger.debug("options: #{options.inspect}")
+          self.logger.debug("global_options: #{global_options.inspect}")
 
         rescue StandardError => e
           raise e
