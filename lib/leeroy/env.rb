@@ -25,7 +25,7 @@ module Leeroy
     def initialize(env = ENV)
       begin
         logger.debug "initializing #{self.class}"
-        filtered = _filter_env(env)
+        filtered = _filterEnv(env)
         logger.debug "filtered: #{filtered.inspect}"
         self.dump_properties = filtered.keys.sort.collect { |x| x.to_sym }
         super(filtered)
@@ -35,9 +35,17 @@ module Leeroy
       end
     end
 
+    def to_s
+      _prettyPrint
+    end
+
     private
 
-    def _filter_env(env, prefix = 'LEEROY_')
+    def _prettyPrint
+      self.dump_properties.collect {|x| x.to_s}.sort.collect {|x| sprintf('%s=%s', x, self.fetch(x))}.join("\n")
+    end
+
+    def _filterEnv(env, prefix = 'LEEROY_')
       begin
         logger.debug("filtering env by prefix '#{prefix}'")
         env.select { |k,v| k.start_with?(prefix) }

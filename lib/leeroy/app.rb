@@ -1,12 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'ap'
 require 'gli'
 
 require 'leeroy'
 require 'leeroy/task/image'
 require 'leeroy/task/instantiate'
-require 'leeroy/task/poll_instance'
 require 'leeroy/task/terminate'
 require 'leeroy/task/sleep'
 require 'leeroy/task/stub'
@@ -35,7 +33,7 @@ module Leeroy
     desc "Displays leeroy's environment settings."
     command :env do |c|
       c.action do |global_options,options,args|
-        ap Leeroy::Env.new
+        puts Leeroy::Env.new.to_s
       end
     end
 
