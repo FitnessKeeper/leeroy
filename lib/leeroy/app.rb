@@ -32,6 +32,9 @@ module Leeroy
 
     desc "Displays leeroy's environment settings."
     command :env do |c|
+      c.desc "Use default environment settings instead of reading from shell environment."
+      c.switch :default, :d
+
       c.desc "Format environment settings for use in .profile."
       c.switch :profile, :p
 
