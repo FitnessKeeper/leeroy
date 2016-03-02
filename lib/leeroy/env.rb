@@ -41,18 +41,19 @@ module Leeroy
       'LEEROY_PROVISIONING_TEMPLATE_PREFIX' => '<path on local filesystem to directory containing user-data templates>',
     }
 
-    attr_reader :default, :profile
+    # attr_reader :default, :profile
+    attr_reader :profile, :defaults
 
     def initialize(options = {}, env = ENV)
       begin
         logger.debug "initializing #{self.class}"
         logger.debug "options: #{options.inspect}"
 
-        @default = options[:default]
+        @defaults = options[:default]
         @profile = options[:profile]
 
-        # filtered = self.default ? ENV_DEFAULTS : _filterEnv(env)
-        filtered = _filterEnv(env)
+        unfiltered = self.defaults ? ENV_DEFAULTS : env
+        filtered = _filterEnv(unfiltered)
         logger.debug "filtered: #{filtered.inspect}"
 
         self.dump_properties = filtered.keys.sort.collect { |x| x.to_sym }
@@ -76,6 +77,10 @@ module Leeroy
       else
         formatstr = '%s=%s'
         header = nil
+      end
+
+      if self.defaults
+        formatstr = '# '.concat(formatstr)
       end
 
       properties = self.dump_properties.collect {|x| x.to_s}.sort.collect {|x| sprintf(formatstr, x, self.fetch(x))}
