@@ -1,4 +1,4 @@
-# leeroy
+# leeroy [![Gem Version](https://badge.fury.io/rb/leeroy_app.svg)](https://badge.fury.io/rb/leeroy_app) [![Code Climate](https://codeclimate.com/github/FitnessKeeper/leeroy/badges/gpa.svg)](https://codeclimate.com/github/FitnessKeeper/leeroy)
 o rly?  ya rly!
 
 ## Installation/Configuration
