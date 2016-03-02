@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    leeroy (0.1.0)
+    leeroy_app (0.1.0)
       awesome_print (~> 1.6)
       aws-sdk (~> 2)
       chronic (~> 0.10)
@@ -93,7 +93,7 @@ PLATFORMS
 DEPENDENCIES
   aruba (~> 0.11.1)
   bundler (~> 1.6)
-  leeroy!
+  leeroy_app!
   pry (~> 0.10)
   pry-awesome_print (~> 9.6)
   rake (~> 10.0)

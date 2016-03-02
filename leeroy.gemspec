@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'leeroy/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "leeroy"
+  spec.name          = "leeroy_app"
   spec.version       = Leeroy::VERSION
   spec.authors       = ["Steve Huff"]
   spec.email         = ["steve.huff@runkeeper.com"]
