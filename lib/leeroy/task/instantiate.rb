@@ -90,20 +90,9 @@ module Leeroy
           template = File.join(checkEnv('LEEROY_PROVISIONING_TEMPLATE_PREFIX'), "#{phase}.erb")
           logger.debug "processing template '#{template}'"
 
-          # this is heinous
-          # http://stackoverflow.com/a/22777806/17597
-          rendered = String.new
-
-          begin
-            old_stdout = $stdout
-            $stdout = StringIO.new('','w')
-            ERB.new(File.read(template)).run
-            rendered = $stdout.string
-          ensure
-            $stdout = old_stdout
-          end
-
-          rendered
+          # run the ERB renderer in a separate thread, restricted
+          # http://www.stuartellis.eu/articles/erb/
+          rendered = ERB.new(File.read(template), 0).result(binding)
 
         rescue StandardError => e
           raise e
