@@ -2,12 +2,14 @@ require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
 require 'leeroy/helpers/polling'
+require 'leeroy/helpers/template'
 
 module Leeroy
   module Task
     class Instantiate < Leeroy::Task::Base
       include Leeroy::Helpers::AWS
       include Leeroy::Helpers::Polling
+      include Leeroy::Helpers::Template
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)
         begin
@@ -88,11 +90,7 @@ module Leeroy
       def _readSemaphore(phase)
         begin
           template = File.join(checkEnv('LEEROY_PROVISIONING_TEMPLATE_PREFIX'), "#{phase}.erb")
-          logger.debug "processing template '#{template}'"
-
-          # run the ERB renderer in a separate thread, restricted
-          # http://www.stuartellis.eu/articles/erb/
-          rendered = ERB.new(File.read(template), 0).result(binding)
+          renderTemplate(template, binding)
 
         rescue StandardError => e
           raise e
