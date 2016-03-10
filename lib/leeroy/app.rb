@@ -8,6 +8,7 @@ require 'leeroy/task/instantiate'
 require 'leeroy/task/terminate'
 require 'leeroy/task/sleep'
 require 'leeroy/task/stub'
+require 'leeroy/types/phase'
 
 include GLI::App
 
@@ -15,7 +16,7 @@ module Leeroy
   module App
 
     # constants
-    VALID_PHASE = ['gold_master','application']
+    VALID_PHASE = Leeroy::Types::Phase::VALID_PHASE
 
     program_desc 'Automate tasks with Jenkins'
 

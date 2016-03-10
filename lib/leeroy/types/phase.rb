@@ -5,7 +5,7 @@ module Leeroy
     class Phase < String
       include Leeroy::Helpers::Logging
 
-      VALID_PHASE = ['gold_master', 'application']
+      VALID_PHASE = ['gold_master', 'application', 'db_worker']
 
       def initialize(*args, &block)
         begin
