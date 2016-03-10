@@ -13,7 +13,7 @@ module Leeroy
     module AWS
       include Leeroy::Helpers
 
-      attr :ec2, :s3
+      attr :ec2, :rds, :s3
 
       def initialize(*args, &block)
         super(*args, &block)
@@ -21,6 +21,7 @@ module Leeroy
         logger.debug "initializing AWS helpers"
 
         @ec2 = Aws::EC2::Client.new
+        @s3 = Aws::RDS::Client.new
         @s3 = Aws::S3::Client.new
 
         logger.debug "AWS helpers initialized"
@@ -260,6 +261,47 @@ module Leeroy
 
         latest_image
 
+      end
+
+      # RDS
+
+      def rdsRequest(method, params = {}, rds = self.rds, options = self.options, global_options = self.global_options)
+        begin
+          logger.debug "constructing RDS request for '#{method}'"
+
+          params_mash = Leeroy::Types::Mash.new(params)
+          params = params_mash
+
+          logger.debug "params: #{params.inspect}"
+
+          resp = rds.send(method.to_sym, params)
+
+          logger.debug "resp: #{resp.inspect}"
+
+          resp
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
+      def getRDSInstanceEndpoint(instancename, rds = self.rds)
+        begin
+          logger.debug "getting DB Instance Endpoint for '#{instancename}'"
+
+          resp = rdsRequest(:describe_db_instances, {:db_instance_identifier => instancename})
+          db_instances = resp.db_instances
+          logger.debug "db_instances: #{db_instances.inspect}"
+
+          db_instances[0].endpoint.address
+
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+
+        rescue StandardError => e
+          raise e
+        end
       end
 
       # S3

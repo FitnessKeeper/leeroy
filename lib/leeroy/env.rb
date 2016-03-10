@@ -14,11 +14,13 @@ module Leeroy
 
     # constants
     S3_PREFIXES = {
-      :secrets    => 'secrets',
-      :jenkins    => 'jenkins',
       :builds     => 'builds',
+      :fixtures   => 'fixtures',
+      :jenkins    => 'jenkins',
       :logs       => 'logs',
+      :secrets    => 'secrets',
       :semaphores => 'semaphores',
+      :sql        => 'fixtures/sql',
       :tests      => 'tests',
     }
 
