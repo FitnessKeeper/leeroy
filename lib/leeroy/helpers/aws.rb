@@ -32,7 +32,6 @@ module Leeroy
       def ec2Request(method, params = {}, ec2 = self.ec2, options = self.options, global_options = self.global_options)
         begin
           logger.debug "constructing EC2 request for '#{method}'"
-          logger.debug "params: #{params.inspect}"
 
           params_mash = Leeroy::Types::Mash.new(params)
           params = params_mash
@@ -40,8 +39,6 @@ module Leeroy
           dry_run = global_options[:op] ? false : true
 
           params.dry_run = dry_run
-
-          logger.debug "params: #{params.inspect}"
 
           resp = ec2.send(method.to_sym, params)
 

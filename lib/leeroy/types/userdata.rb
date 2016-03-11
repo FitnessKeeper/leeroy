@@ -6,7 +6,7 @@ module Leeroy
   module Types
     class UserData < Leeroy::Types::PackedString
       def encoded_for_ec2(input = self.to_s)
-        Base64.urlsafe_encode64(input)
+        Base64.encode64(input)
       end
     end
   end
