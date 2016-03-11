@@ -93,7 +93,7 @@ module Leeroy
           image_params.instance_id = instance_id
 
           # generate image name based on state data
-          image_params.name = genImageName(state)
+          image_params.name = genImageName(phase, state)
 
           image_params
 

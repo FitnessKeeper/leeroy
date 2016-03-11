@@ -16,6 +16,8 @@ module Leeroy
           # extract phase from state if not provided
           phase = state.phase if phase.nil?
 
+          raise "no phase provided in state data or as param, exiting." if phase.nil?
+
           # were we given an app_name?
           app_name = state.app_name? ? state.app_name : checkEnv('LEEROY_APP_NAME')
           logger.debug "app_name: #{app_name}"
@@ -27,7 +29,7 @@ module Leeroy
           when 'application'
             checkEnv('LEEROY_BUILD_TARGET')
           else
-            raise "No phase provided in state data, exiting."
+            raise "unable to build target for phase"
           end
 
           # were we given an image index?
