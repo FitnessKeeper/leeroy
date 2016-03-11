@@ -1,6 +1,7 @@
 require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
+require 'leeroy/helpers/inventory'
 require 'leeroy/helpers/polling'
 require 'leeroy/types/image'
 require 'leeroy/types/phase'
@@ -9,6 +10,7 @@ module Leeroy
   module Task
     class Image < Leeroy::Task::Base
       include Leeroy::Helpers::AWS
+      include Leeroy::Helpers::Inventory
       include Leeroy::Helpers::Polling
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)
@@ -90,31 +92,10 @@ module Leeroy
           logger.debug "instance_id: #{instance_id}"
           image_params.instance_id = instance_id
 
-          # were we given an app_name?
-          app_name = state.app_name? ? state.app_name : checkEnv('LEEROY_APP_NAME')
-          logger.debug "app_name: #{app_name}"
-
-          # were we given an image index?
-          index = _genImageIndex(state, env, ec2, options).to_s
-          logger.debug "index: #{index}"
-
-          # build target depends on phase
-          build_target = phase == 'gold_master' ? 'master' : checkEnv('LEEROY_BUILD_TARGET')
-
-          image_params.name = [app_name, build_target, index].join('-')
+          # generate image name based on state data
+          image_params.name = genImageName(state)
 
           image_params
-
-        rescue StandardError => e
-          raise e
-        end
-      end
-
-      def _genImageIndex(state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
-        begin
-          logger.debug "determining gold master instance ID"
-
-          options[:index] or getGoldMasterImageIndex.to_i + 1
 
         rescue StandardError => e
           raise e

@@ -208,7 +208,7 @@ module Leeroy
 
           resp = ec2Request(:describe_images, run_params)
 
-          # now filter based on callback
+          # now filter based on callbacks
           resp.images.select {|x| selector.call(x)}.collect {|x| collector.call(x)}
 
         rescue Aws::EC2::Errors::DryRunOperation => e
@@ -219,6 +219,26 @@ module Leeroy
           raise e
         end
       end
+
+      def getImageByName(image_name)
+        begin
+
+          raise "image_name parameter cannot be nil" if image_name.nil?
+
+          selector = lambda {|image| image.name == image_name}
+          collector = lambda {|image| image.image_id}
+
+          image_ids = filterImages(selector, collector)
+          logger.debug image_ids.inspect
+          logger.debug "image_name: #{image_name}"
+
+          image_ids[0]
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
 
       def getGoldMasterInstanceName(env_name = 'LEEROY_GOLD_MASTER_NAME')
         checkEnv(env_name)
@@ -235,7 +255,7 @@ module Leeroy
           collector = lambda {|image| image.name}
 
           image_names = filterImages(selector, collector)
-          logger.debug image_names.awesome_inspect
+          logger.debug image_names.inspect
         end
 
       end

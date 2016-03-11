@@ -1,6 +1,7 @@
 require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
+require 'leeroy/helpers/inventory'
 require 'leeroy/helpers/polling'
 require 'leeroy/helpers/template'
 
@@ -8,6 +9,7 @@ module Leeroy
   module Task
     class Instantiate < Leeroy::Task::Base
       include Leeroy::Helpers::AWS
+      include Leeroy::Helpers::Inventory
       include Leeroy::Helpers::Polling
       include Leeroy::Helpers::Template
 
@@ -153,14 +155,17 @@ module Leeroy
           phase = options[:phase]
           logger.debug "phase is #{phase}"
 
-          # AMI id depends on phase
-          if phase == 'gold_master'
-            image_id = checkEnv('LEEROY_AWS_LINUX_AMI')
-          elsif phase == 'application'
-            image_id = state.imageid
-          end
-
           instance_params.phase = phase
+
+          # AMI id depends on phase
+          image_id = case phase
+          when 'gold_master'
+            checkEnv('LEEROY_AWS_LINUX_AMI')
+          when 'application'
+            state.imageid || getImageByName(genImageName('gold_master'))
+          else
+            nil
+          end
 
           raise "unable to determine image ID for phase '#{phase}'" if image_id.nil?
 
