@@ -21,7 +21,7 @@ module Leeroy
         logger.debug "initializing AWS helpers"
 
         @ec2 = Aws::EC2::Client.new
-        @s3 = Aws::RDS::Client.new
+        @rds = Aws::RDS::Client.new
         @s3 = Aws::S3::Client.new
 
         logger.debug "AWS helpers initialized"
@@ -241,26 +241,34 @@ module Leeroy
         checkEnv(env_name)
       end
 
-      def getApplicationInstanceName(index, env_app = 'LEEROY_APP_NAME', env_name = 'LEEROY_BUILD_TARGET')
-        name_prefix = [checkEnv(env_app), checkEnv(env_name), index].join('-')
+      def getApplicationInstanceName(index = nil, env_app = 'LEEROY_APP_NAME', env_name = 'LEEROY_BUILD_TARGET')
+        name_prefix = [checkEnv(env_app), checkEnv(env_name)].join('-')
         logger.debug "name_prefix: #{name_prefix}"
 
         if index.nil?
-          # determine the index by looking at existing images
-          selector = lambda {|image| image.name =~ /^#{name_prefix}/}
-          # and extract the names
-          collector = lambda {|image| image.name}
-
-          image_names = filterImages(selector, collector)
-          logger.debug image_names.inspect
+          index = getApplicationImageIndex
         end
+
+        instance_name = [name_prefix, index].join('-')
+        logger.debug "instance_name: #{instance_name}"
+
+        instance_name
 
       end
 
       def getGoldMasterImageIndex(env_prefix = 'LEEROY_GOLD_MASTER_IMAGE_PREFIX')
         name_prefix = checkEnv(env_prefix)
-        logger.debug "name_prefix: #{name_prefix}"
+        getMaxImageIndex(name_prefix)
+      end
 
+      def getApplicationImageIndex(env_build_target = 'LEEROY_BUILD_TARGET', env_app_name = 'LEEROY_APP_NAME')
+        app_name = checkEnv(env_app_name)
+        build_target = checkEnv(env_build_target)
+        name_prefix = [app_name, build_target].join('-')
+        getMaxImageIndex(name_prefix)
+      end
+
+      def getMaxImageIndex(name_prefix)
         # determine the index by looking at existing images
         selector = lambda {|image| image.name =~ /^#{name_prefix}/}
         # and extract the names
@@ -273,7 +281,7 @@ module Leeroy
           end
         end
 
-        latest_image = image_numbers.sort.compact.uniq.pop
+        latest_image = image_numbers.sort.compact.uniq.pop || 1
         logger.debug "latest_image: #{latest_image}"
 
         latest_image
