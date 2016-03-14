@@ -27,11 +27,11 @@ module Leeroy
         logger.debug "AWS helpers initialized"
       end
 
-      # EC2
-
-      def ec2Request(method, params = {}, ec2 = self.ec2, options = self.options, global_options = self.global_options)
+      def awsRequest(service, method, params = {}, global_options = self.global_options)
         begin
-          logger.debug "constructing EC2 request for '#{method}'"
+          logger.debug "constructing AWS request for '#{service}: #{method}'"
+
+          client = self.send(service.to_sym)
 
           params_mash = Leeroy::Types::Mash.new(params)
           params = params_mash
@@ -40,16 +40,46 @@ module Leeroy
 
           params.dry_run = dry_run
 
-          resp = ec2.send(method.to_sym, params)
+          resp = client.send(method.to_sym, params)
 
           logger.debug "resp: #{resp.inspect}"
 
           resp
 
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+
         rescue StandardError => e
           raise e
         end
       end
+      # EC2
+
+      def ec2Request(method, params = {}, global_options = self.global_options)
+        awsRequest(:ec2, method, params, global_options)
+      end
+      # def ec2Request(method, params = {}, ec2 = self.ec2, options = self.options, global_options = self.global_options)
+      #   begin
+      #     logger.debug "constructing EC2 request for '#{method}'"
+      #
+      #     params_mash = Leeroy::Types::Mash.new(params)
+      #     params = params_mash
+      #
+      #     dry_run = global_options[:op] ? false : true
+      #
+      #     params.dry_run = dry_run
+      #
+      #     resp = ec2.send(method.to_sym, params)
+      #
+      #     logger.debug "resp: #{resp.inspect}"
+      #
+      #     resp
+      #
+      #   rescue StandardError => e
+      #     raise e
+      #   end
+      # end
 
       def getVpcId(vpcname, ec2 = self.ec2)
         begin
