@@ -40,7 +40,7 @@ module Leeroy
       'LEEROY_POLL_TIMEOUT' => '<number of seconds to wait between giving up on long-running AWS operations>',
       'LEEROY_PROVISIONING_TEMPLATE_PREFIX' => '<path on local filesystem to directory containing provisioning templates>',
       'LEEROY_S3_BUCKET' => '<name of bucket used as datastore>',
-      'LEEROY_PROVISIONING_TEMPLATE_PREFIX' => '<path on local filesystem to directory containing user-data templates>',
+      'LEEROY_USER_DATA_PREFIX' => '<path on local filesystem to directory containing user-data scripts>',
     }
 
     ENV_EXTRAS = {
