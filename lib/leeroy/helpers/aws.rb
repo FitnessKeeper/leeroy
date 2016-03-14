@@ -36,9 +36,13 @@ module Leeroy
           params_mash = Leeroy::Types::Mash.new(params)
           params = params_mash
 
-          dry_run = global_options[:op] ? false : true
+          # dry_run is an ec2 thing
+          case service.to_sym
+          when :ec2
+            dry_run = global_options[:op] ? false : true
 
-          params.dry_run = dry_run
+            params.dry_run = dry_run
+          end
 
           resp = client.send(method.to_sym, params)
 
@@ -46,40 +50,22 @@ module Leeroy
 
           resp
 
-        rescue Aws::EC2::Errors::DryRunOperation => e
-          logger.info e.message
-          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
-
         rescue StandardError => e
           raise e
         end
       end
+
       # EC2
 
       def ec2Request(method, params = {}, global_options = self.global_options)
-        awsRequest(:ec2, method, params, global_options)
+        begin
+          awsRequest(:ec2, method, params, global_options)
+
+        rescue Aws::EC2::Errors::DryRunOperation => e
+          logger.info e.message
+          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+        end
       end
-      # def ec2Request(method, params = {}, ec2 = self.ec2, options = self.options, global_options = self.global_options)
-      #   begin
-      #     logger.debug "constructing EC2 request for '#{method}'"
-      #
-      #     params_mash = Leeroy::Types::Mash.new(params)
-      #     params = params_mash
-      #
-      #     dry_run = global_options[:op] ? false : true
-      #
-      #     params.dry_run = dry_run
-      #
-      #     resp = ec2.send(method.to_sym, params)
-      #
-      #     logger.debug "resp: #{resp.inspect}"
-      #
-      #     resp
-      #
-      #   rescue StandardError => e
-      #     raise e
-      #   end
-      # end
 
       def getVpcId(vpcname, ec2 = self.ec2)
         begin
@@ -320,24 +306,8 @@ module Leeroy
 
       # RDS
 
-      def rdsRequest(method, params = {}, rds = self.rds, options = self.options, global_options = self.global_options)
-        begin
-          logger.debug "constructing RDS request for '#{method}'"
-
-          params_mash = Leeroy::Types::Mash.new(params)
-          params = params_mash
-
-          logger.debug "params: #{params.inspect}"
-
-          resp = rds.send(method.to_sym, params)
-
-          logger.debug "resp: #{resp.inspect}"
-
-          resp
-
-        rescue StandardError => e
-          raise e
-        end
+      def rdsRequest(method, params = {}, global_options = self.global_options)
+        awsRequest(:rds, method, params, global_options)
       end
 
       def getRDSInstanceEndpoint(instancename, rds = self.rds)
@@ -361,24 +331,8 @@ module Leeroy
 
       # S3
 
-      def s3Request(method, params = {}, s3 = self.s3, options = self.options, global_options = self.global_options)
-        begin
-          logger.debug "constructing S3 request for '#{method}'"
-
-          params_mash = Leeroy::Types::Mash.new(params)
-          params = params_mash
-
-          logger.debug "params: #{params.inspect}"
-
-          resp = s3.send(method.to_sym, params)
-
-          logger.debug "resp: #{resp.inspect}"
-
-          resp
-
-        rescue StandardError => e
-          raise e
-        end
+      def s3Request(method, params = {}, global_options = self.global_options)
+        awsRequest(:s3, method, params, global_options)
       end
 
       def buildS3ObjectName(key, type, prefixes = Leeroy::Env::S3_PREFIXES)
