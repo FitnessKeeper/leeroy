@@ -67,7 +67,7 @@ module Leeroy
         end
       end
 
-      def getVpcId(vpcname, ec2 = self.ec2)
+      def getVpcId(vpcname)
         begin
           logger.debug "getting VPC ID for '#{vpcname}'"
 
@@ -95,7 +95,7 @@ module Leeroy
         end
       end
 
-      def getSgId(sgname, vpcname, vpcid, ec2 = self.ec2)
+      def getSgId(sgname, vpcname, vpcid)
         begin
           logger.debug "getting SG ID for '#{sgname}'"
 
@@ -148,7 +148,7 @@ module Leeroy
 
         rescue Aws::EC2::Errors::DryRunOperation => e
           logger.info e.message
-          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+          "DRYRUN_DUMMY_VALUE: #{self.class}"
 
         rescue StandardError => e
           raise e
@@ -174,7 +174,7 @@ module Leeroy
 
         rescue Aws::EC2::Errors::DryRunOperation => e
           logger.info e.message
-          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+          "DRYRUN_DUMMY_VALUE: #{self.class}"
 
         rescue StandardError => e
           raise e
@@ -182,7 +182,7 @@ module Leeroy
       end
 
 
-      def createTags(tags = {}, resourceids = [], state = self.state, env = self.env, ec2 = self.ec2, options = self.options)
+      def createTags(tags = {}, resourceids = [], state = self.state, env = self.env, options = self.options)
         begin
           if resourceids.length == 0
             if state.instanceid?
@@ -206,7 +206,7 @@ module Leeroy
 
         rescue Aws::EC2::Errors::DryRunOperation => e
           logger.info e.message
-          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+          "DRYRUN_DUMMY_VALUE: #{self.class}"
 
         rescue StandardError => e
           raise e
@@ -226,7 +226,7 @@ module Leeroy
 
         rescue Aws::EC2::Errors::DryRunOperation => e
           logger.info e.message
-          "DRYRUN_DUMMY_VALUE: #{self.class.to_s}"
+          "DRYRUN_DUMMY_VALUE: #{self.class}"
 
         rescue StandardError => e
           raise e
@@ -293,7 +293,8 @@ module Leeroy
         image_names = filterImages(selector, collector)
         image_numbers = image_names.collect do |name|
           if name =~ /(\d+)$/
-            image_number = $1.to_i
+            # extract numeric suffixes of names, convert to Integers
+            $1.to_i
           end
         end
 
@@ -310,7 +311,7 @@ module Leeroy
         awsRequest(:rds, method, params, global_options)
       end
 
-      def getRDSInstanceEndpoint(instancename, rds = self.rds)
+      def getRDSInstanceEndpoint(instancename)
         begin
           logger.debug "getting DB Instance Endpoint for '#{instancename}'"
 
