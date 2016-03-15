@@ -24,7 +24,7 @@ module Leeroy
         logger.debug e.message
 
         not_found = args[0]
-        logger.info "property '#{not_found}' not found in statedata, checking state"
+        logger.debug "property '#{not_found}' not found in statedata, checking state"
 
         begin
           self.send(not_found.to_sym, &block)

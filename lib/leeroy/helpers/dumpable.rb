@@ -28,11 +28,7 @@ module Leeroy
               begin
                 raw = self.fetch(property.to_s)
 
-                # logger.debug "raw: #{raw.inspect}"
-
                 cooked = raw.respond_to?(:dumper) ? raw.dumper : raw
-
-                # logger.debug "cooked: #{cooked.inspect}"
 
                 dump_mash.store(property.to_s, cooked)
 

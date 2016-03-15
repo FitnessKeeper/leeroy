@@ -1,5 +1,3 @@
-require 'awesome_print'
-
 require 'leeroy/env'
 require 'leeroy/helpers'
 

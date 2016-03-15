@@ -36,10 +36,10 @@ module Leeroy
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)
         begin
-          self.logger.info("performing #{self.class.to_s}")
-          self.logger.debug("args: #{args.inspect}")
-          self.logger.debug("options: #{options.inspect}")
-          self.logger.debug("global_options: #{global_options.inspect}")
+          logger.info("performing #{self.class.to_s}")
+          logger.debug("args: #{args.inspect}")
+          logger.debug("options: #{options.inspect}")
+          logger.debug("global_options: #{global_options.inspect}")
 
         rescue StandardError => e
           raise e
