@@ -3,11 +3,13 @@
 require 'gli'
 
 require 'leeroy'
+require 'leeroy/task/fixture'
 require 'leeroy/task/image'
 require 'leeroy/task/instantiate'
 require 'leeroy/task/terminate'
 require 'leeroy/task/sleep'
 require 'leeroy/task/stub'
+require 'leeroy/types/fixture'
 require 'leeroy/types/phase'
 
 include GLI::App
@@ -16,7 +18,8 @@ module Leeroy
   module App
 
     # constants
-    VALID_PHASE = Leeroy::Types::Phase::VALID_PHASE
+    VALID_PHASE = Leeroy::Types::Phase.to_a.collect {|x| x.value}.sort
+    VALID_FIXTURE = Leeroy::Types::Fixture.to_a.collect {|x| x.value}.sort
 
     program_desc 'Automate tasks with Jenkins'
 
@@ -54,7 +57,7 @@ module Leeroy
       c.action do |global_options,options,args|
         # validate input
         unless options[:phase].nil? or valid_phase.include?(options[:phase])
-          help_now! "Valid arguments for '--phase' are: #{valid_phase.sort.join(',')}."
+          help_now! "Valid arguments for '--phase' are: #{valid_phase.join(',')}."
         end
 
         task = Leeroy::Task::Instantiate.new(global_options: global_options, options: options, args: args)
@@ -90,7 +93,7 @@ module Leeroy
       c.action do |global_options,options,args|
         # validate input
         unless options[:phase].nil? or valid_phase.include?(options[:phase])
-          help_now! "Valid arguments for '--phase' are: #{valid_phase.sort.join(',')}."
+          help_now! "Valid arguments for '--phase' are: #{valid_phase.join(',')}."
         end
 
         # index must be nil or must look like a positive integer
@@ -104,6 +107,24 @@ module Leeroy
         end
 
         task = Leeroy::Task::Image.new(global_options: global_options, options: options, args: args)
+        task.perform
+      end
+    end
+
+    desc "Creates a fixture for a staging environment."
+    command :fixture do |c|
+
+      valid_fixture = VALID_FIXTURE
+      c.desc "Phase of deploy process for which to deploy (must be one of #{valid_fixture.sort})."
+      c.flag [:f, :fixture], :must_match => valid_fixture
+
+      c.action do |global_options,options,args|
+        # validate input
+        unless options[:fixture].nil? or valid_fixture.include?(options[:fixture])
+          help_now! "Valid arguments for '--fixture' are: #{valid_fixture.join(',')}."
+        end
+
+        task = Leeroy::Task::Fixture.new(global_options: global_options, options: options, args: args)
         task.perform
       end
     end

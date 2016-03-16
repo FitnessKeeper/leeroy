@@ -1,26 +1,11 @@
-require 'leeroy/helpers/logging'
+require 'leeroy/types/enum'
 
 module Leeroy
   module Types
-    class Phase < String
-      include Leeroy::Helpers::Logging
+    class Phase < Leeroy::Types::Enum
 
-      VALID_PHASE = ['gold_master', 'application']
-
-      def initialize(*args, &block)
-        begin
-          super
-
-          phase = self.to_s
-          raise "invalid value for phase: '#{phase}'" unless VALID_PHASE.include?(phase)
-
-        rescue TypeError => e
-          raise "invalid value for phase: #{e.message}"
-
-        rescue StandardError => e
-          raise e
-        end
-      end
+      new :GOLD_MASTER
+      new :APPLICATION
 
     end
   end

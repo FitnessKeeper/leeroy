@@ -23,7 +23,7 @@ module Leeroy
           logger.debug "app_name: #{app_name}"
 
           # build target depends on phase
-          build_target = case phase
+          build_target = case phase.to_s
           when 'gold_master'
             'master'
           when 'application'
@@ -55,7 +55,7 @@ module Leeroy
             logger.debug "index provided: #{index}"
           else
             logger.debug "index not provided, calculating"
-            phase = state.phase
+            phase = state.phase.to_s
 
             index = case phase
             when 'gold_master'
@@ -63,7 +63,7 @@ module Leeroy
             when 'application'
               getGoldMasterImageIndex.to_i
             else
-              raise "unable to determine image index for phase '#{phase.to_s}'"
+              raise "unable to determine image index for phase '#{phase}'"
             end
           end
 

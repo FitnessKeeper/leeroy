@@ -17,7 +17,8 @@ module Leeroy
         begin
           super(args, options, global_options)
 
-          phase = Leeroy::Types::Phase.new(self.state.fetch('phase', options[:phase]))
+          # phase = Leeroy::Types::Phase.new(self.state.fetch('phase', options[:phase]))
+          phase = self.state.fetch('phase', Leeroy::Types::Phase.find_by_value_str(options[:phase]))
           self.state.phase = phase
 
           # resolve various AWS resources from human-readable inputs

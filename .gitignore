@@ -1,5 +1,6 @@
 *.gem
 *.rbc
+.rake_t_cache
 /.config
 /coverage/
 /InstalledFiles

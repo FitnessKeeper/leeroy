@@ -13,7 +13,7 @@ module Leeroy
       include Leeroy::Helpers::Dumpable
       include Leeroy::Helpers::Logging
 
-      property :phase, required: true, coerce: Leeroy::Types::Phase
+      property :phase, required: true, coerce: lambda {|x| Leeroy::Types::Phase.from_s(x.to_s)}
       property :aws_params
 
       # AWS-specific params
