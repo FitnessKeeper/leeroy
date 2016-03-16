@@ -18,8 +18,8 @@ module Leeroy
   module App
 
     # constants
-    VALID_PHASE = Leeroy::Types::Phase.to_a.collect {|x| x.value}.sort
-    VALID_FIXTURE = Leeroy::Types::Fixture.to_a.collect {|x| x.value}.sort
+    VALID_PHASE = Leeroy::Types::Phase.to_a.collect {|x| x.value}
+    VALID_FIXTURE = Leeroy::Types::Fixture.to_a.collect {|x| x.value}
 
     program_desc 'Automate tasks with Jenkins'
 
@@ -115,7 +115,7 @@ module Leeroy
     command :fixture do |c|
 
       valid_fixture = VALID_FIXTURE
-      c.desc "Phase of deploy process for which to deploy (must be one of #{valid_fixture.sort})."
+      c.desc "Phase of deploy process for which to deploy (must be one of #{valid_fixture})."
       c.flag [:f, :fixture], :must_match => valid_fixture
 
       c.desc "Header template to be rendered before fixture template."

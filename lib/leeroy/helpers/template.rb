@@ -7,15 +7,15 @@ module Leeroy
 
       def renderTemplate(template, b = binding)
         begin
-          logger.debug "processing template '#{template}'"
-
           # is the template a file?
           begin
             template_str = File.read(template)
+            logger.debug "reading template from '#{template}'"
 
-          rescue Errno::ENOENT => e
+          rescue SystemCallError => e
             logger.debug e.message
             template_str = template
+            logger.debug "reading template from provided string"
           end
 
           # run the ERB renderer in a separate thread, restricted

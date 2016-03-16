@@ -45,16 +45,16 @@ module Leeroy
           # get the DB template from S3
           dumpsrc = buildS3ObjectName(checkEnv('LEEROY_DB_TEMPLATE'), 'sql')
 
-          logger.debug "retrieving DB template from '#{templatesrc}'"
+          logger.debug "retrieving DB template from '#{dumpsrc}'"
 
-          dumpobj = genSemaphore(object: templatesrc)
+          dumpobj = genSemaphore(dumpsrc)
 
           # is the template in S3?
-          raise "DB template not available in S3" unless checkSemaphore(templateobj)
+          raise "DB template not available in S3" unless checkSemaphore(dumpobj)
 
           # start building the DB dump
           dump = ''
-          dumptemplate = getSemaphore(semaphore)
+          dumptemplate = getSemaphore(dumpobj)
 
           unless header.nil?
             # render the DB header
@@ -71,7 +71,7 @@ module Leeroy
 
           logger.debug "storing DB template in '#{dumpdst}'"
 
-          dumpobj = genSemaphore(object: dumpdst, payload: dump)
+          dumpobj = genSemaphore(dumpdst, dump)
 
           setSemaphore(dumpobj)
 
