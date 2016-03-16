@@ -9,9 +9,18 @@ module Leeroy
         begin
           logger.debug "processing template '#{template}'"
 
+          # is the template a file?
+          begin
+            template_str = File.read(template)
+
+          rescue Errno::ENOENT => e
+            logger.debug e.message
+            template_str = template
+          end
+
           # run the ERB renderer in a separate thread, restricted
           # http://www.stuartellis.eu/articles/erb/
-          ERB.new(File.read(template), 0).result(binding)
+          ERB.new(template_str, 0).result(b)
 
         rescue StandardError => e
           raise e

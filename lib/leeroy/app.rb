@@ -118,6 +118,9 @@ module Leeroy
       c.desc "Phase of deploy process for which to deploy (must be one of #{valid_fixture.sort})."
       c.flag [:f, :fixture], :must_match => valid_fixture
 
+      c.desc "Header template to be rendered before fixture template."
+      c.flag [:h, :header], :default_value => nil
+
       c.action do |global_options,options,args|
         # validate input
         unless options[:fixture].nil? or valid_fixture.include?(options[:fixture])

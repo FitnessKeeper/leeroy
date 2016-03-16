@@ -450,6 +450,30 @@ module Leeroy
         end
       end
 
+      def getSemaphore(semaphore)
+        begin
+          unless semaphore.kind_of?(Leeroy::Types::Semaphore)
+            semaphore = Leeroy::Types::Semaphore.new(semaphore)
+          end
+
+          run_params = Leeroy::Types::Mash.new
+          run_params.bucket = semaphore.bucket
+          run_params.key = semaphore.object
+
+          logger.debug "downloading #{semaphore}"
+          resp = s3Request(:get_object, run_params)
+
+          resp.body.string
+
+        rescue Aws::S3::Errors::NotFound => e
+          logger.debug "#{semaphore} not found"
+          nil
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+
     end
   end
 end
