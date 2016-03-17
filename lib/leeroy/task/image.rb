@@ -17,7 +17,8 @@ module Leeroy
         begin
           super(args, options, global_options)
 
-          phase = Leeroy::Types::Phase.new(self.state.fetch('phase', options[:phase]))
+          phase = Leeroy::Types::Phase.resolve(self.state.fetch('phase'), options[:phase])
+          logger.debug "phase: #{phase}"
           self.state.phase = phase
 
           # create image
