@@ -27,6 +27,10 @@ module Leeroy
     desc "Perform the requested task (pass '--no-op' for testing)."
     switch [:op], :default_value => true
 
+    desc "Control reading of state from stdin (pass '--no-stdin' to force disable)."
+    switch [:stdin], :default_value => true
+
+    # commands
     desc 'Displays the version of leeroy and exits.'
     command :version do |c|
       c.action do |global_options,options,args|

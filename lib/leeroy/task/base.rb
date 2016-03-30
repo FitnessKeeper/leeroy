@@ -26,8 +26,12 @@ module Leeroy
 
           @env = Leeroy::Env.new({}, params.fetch(:env, ENV))
 
-          @state = Leeroy::State.new(state_from_pipe(params.fetch(:state, {})))
-          rotate_task_metadata
+          if self.global_options.fetch(:stdin, true)
+            @state = Leeroy::State.new(state_from_pipe(params.fetch(:state, {})))
+            rotate_task_metadata
+          else
+            @state = Leeroy::State.new
+          end
 
         rescue StandardError => e
           raise e
