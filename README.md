@@ -6,6 +6,7 @@ o rly?  ya rly!
 ### Development
 
     $ bundle install
+    $ export ENVIRONMENT=development
     $ ./bin/leeroy env -d > .env
     $ $EDITOR .env
 
