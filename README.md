@@ -39,3 +39,4 @@ Create a new application image:
 FIXME not implemented yet
 
     $ leeroy bootstrap | leeroy provision
+    #`
