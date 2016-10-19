@@ -29,7 +29,6 @@ module Leeroy
           if self.global_options.fetch(:stdin, true)
             @state = Leeroy::State.new(state_from_pipe(params.fetch(:state, {})))
             rotate_task_metadata
-            puts JSON.pretty_generate(@state)
           else
             @state = Leeroy::State.new
           end
