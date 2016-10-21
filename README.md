@@ -1,4 +1,5 @@
-# leeroy [![Gem Version](https://badge.fury.io/rb/leeroy_app.svg)](https://badge.fury.io/rb/leeroy_app) [![Code Climate](https://codeclimate.com/github/FitnessKeeper/leeroy/badges/gpa.svg)](https://codeclimate.com/github/FitnessKeeper/leeroy)
+# leeroy [![Gem Version](https://badge.fury.io/rb/leeroy_app.svg)](https://badge.fury.io/rb/leeroy_app) [![Code Climate](https://codeclimate.com/github/FitnessKeeper/leeroy/badges/gpa.svg)](https://codeclimate.com/github/FitnessKeeper/leeroy) [![Build Status](https://travis-ci.org/FitnessKeeper/leeroy.svg?branch=master)](https://travis-ci.org/FitnessKeeper/leeroy.svg?branch=master)
+
 o rly?  ya rly!
 
 ## Installation/Configuration
