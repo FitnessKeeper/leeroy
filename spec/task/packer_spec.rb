@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'leeroy'
 require 'leeroy/task'
+require 'leeroy/task/packer'
 require 'leeroy/helpers/aws'
 require 'leeroy/helpers/inventory'
 
