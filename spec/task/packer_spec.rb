@@ -12,4 +12,6 @@ describe "Test Leeroy::Task::Packer New" do
   it "get instance of Leeroy::Task::Packer" do
     expect(@packer).to be_instance_of(Leeroy::Task::Packer)
   end
+  # Test that perform validates packer template syntax
+  
 end
