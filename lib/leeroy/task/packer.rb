@@ -43,39 +43,24 @@ module Leeroy
           }
           cwd = File.join(checkEnv('LEEROY_PACKER_TEMPLATE_PREFIX'), checkEnv('LEEROY_APP_NAME'))
 
-          begin
-            # we should probably check that this isn't empty
-            #packer.perform({},{ :phase => 'gold_master', :template => '/Users/alaric/git/packer-rk-apps/rk-bastion/main.json' })
-            # LEEROY_APP_NAME
-            # We will build the path to the template with LEEROY_PACKER_TEMPLATE_PREFIX LEEROY_APP_NAME and assume the template uses main.json
-            # Also, lets *pass in* the --phase=arg into the packer template itself, and let puppet, or whatever handle
+          validation = validatePacker(cwd, { :vars => packer_vars })
 
-            # { :vars => { :aws_linux_ami=>'ami-c481fad3', :app_name=>'rk-bastion', :aws_region =>'us-east-1'}
-            # LEEROY_APP_NAME LEEROY_AWS_LINUX_AMI AWS_REGION
-
-            validation = validatePacker(cwd, { :vars => packer_vars })
-
-            build = buildPacker(cwd,{ :vars => packer_vars } )
-            build.artifacts.each do | item |
-              state.message = item.string
-              artifact = item.id.split(':')
-              state.imageid = artifact[1]
-            end
-
-            logger.debug "Packer Artifact : #{self.class}"
-
-          rescue StandardError => e
-            logger.debug e.message
-            raise e
+          build = buildPacker(cwd,{ :vars => packer_vars } )
+          build.artifacts.each do | item |
+            state.message = item.string
+            artifact = item.id.split(':')
+            state.imageid = artifact[1]
           end
 
-         # client.validate('/Users/alaric/git/packer-rk-apps/rk-bastion/main.json').valid?
+          logger.debug "#{build.stdout}"
+          logger.debug "Packer Artifact Created : #{state.imageid}"
 
           dump_state
 
           logger.debug "done performing for #{self.class}"
 
         rescue StandardError => e
+          logger.debug e.message
           raise e
         end
       end
