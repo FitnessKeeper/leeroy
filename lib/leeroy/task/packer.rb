@@ -3,18 +3,13 @@ require 'leeroy/task'
 require 'leeroy/helpers/aws'
 require 'leeroy/helpers/inventory'
 require 'leeroy/helpers/packer'
-#require 'leeroy/helpers/polling'
-#require 'leeroy/helpers/template'
-
 # input
 # pass in path to packer template - ex rk-bastion/main.json
 # LEEROY_APP_NAME=rk-bastion
 # LEEROY_AWS_LINUX_AMI=ami-c481fad3
-# LEEROY_BUILD_INSTANCE_TYPE=m3.medium
 # AWS_REGION=us-east-1
 
 # Output region and AMI
-
 
 module Leeroy
   module Task
@@ -22,11 +17,6 @@ module Leeroy
       include Leeroy::Helpers::AWS
       include Leeroy::Helpers::Inventory
       include Leeroy::Helpers::Packer
-
-      #def initialize(*args, &block)
-      #  super
-      #  @client = ::Packer::Client.new
-      #end
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)
         begin
@@ -64,8 +54,6 @@ module Leeroy
           raise e
         end
       end
-
-      private
     end
   end
 end
