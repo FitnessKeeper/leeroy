@@ -56,6 +56,13 @@ module Leeroy
             validation = validatePacker(cwd, { :vars => packer_vars })
 
             build = buildPacker(cwd,{ :vars => packer_vars } )
+            build.artifacts.each do | item |
+              state.message = item.string
+              artifact = item.id.split(':')
+              state.imageid = artifact[1]
+            end
+
+            logger.debug "Packer Artifact : #{self.class}"
 
           rescue StandardError => e
             logger.debug e.message
