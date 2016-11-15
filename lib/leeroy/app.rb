@@ -21,7 +21,7 @@ module Leeroy
     VALID_PHASE = Leeroy::Types::Phase.to_a.collect {|x| x.value}
     VALID_FIXTURE = Leeroy::Types::Fixture.to_a.collect {|x| x.value}
 
-    program_desc 'Automate tasks with Jenkins'
+    program_desc 'Automate tasks with Jenkins. When passing arguments, order is, CLI argument, then ENV[LEEROY_VAR]'
 
     # global options
     desc "Perform the requested task (pass '--no-op' for testing)."
@@ -114,6 +114,46 @@ module Leeroy
         task.perform
       end
     end
+##
+    desc "Creates an image from a Packer template."
+    command :packer do |c|
+
+      valid_phase = VALID_PHASE
+      c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
+      c.flag [:p, :phase]
+
+      c.desc "Source AMI - Order of presence is state, CLI argument, then ENV[LEEROY_AWS_LINUX_AMI]"
+      c.flag [:i, :imageid]
+
+      c.desc "LEEROY_APP_NAME"
+      c.flag [:n, :name]
+
+      #c.desc "LEEROY_PACKER_TEMPLATE_PREFIX"
+      #c.flag []
+
+      c.desc "Image index (optional, will be calculated if not provided)."
+      c.flag [:x, :index]
+
+      c.action do |global_options,options,args|
+      # validate input
+        unless options[:phase].nil? or valid_phase.include?(options[:phase])
+        help_now! "Valid arguments for '--phase' are: #{valid_phase.join(',')}."
+        end
+
+        # index must be nil or must look like a positive integer
+        #begin
+        #  unless options[:index].nil? or options[:index].to_i > 0
+        #    help_now! "The argument for '--index' must be a positive integer."
+        #  end
+
+        #rescue NoMethodError => e
+        #  help_now! "The argument for '--index' must be a positive integer."
+        #end
+        task = Leeroy::Task::Packer.new(global_options: global_options, options: options, args: args)
+        task.perform
+      end
+    end
+##
 
     desc "Creates a fixture for a staging environment."
     command :fixture do |c|
