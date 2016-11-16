@@ -58,12 +58,10 @@ module Leeroy
       end
       private
       def _getPackerParams(state = self.state, env = self.env, options = self.options)
-      #def _genImageParams(phase, state = self.state, env = self.env, options = self.options)
         begin
           logger.debug "generating Packer params to create an AMI"
           packer_params = Leeroy::Types::Mash.new
           #packer_params.phase = phase
-
 
           if self.state.imageid?
             imageid = self.state.imageid
@@ -90,39 +88,13 @@ module Leeroy
           end
           packer_params.aws_region = aws_region
 
-
 #          packer_vars = {
 #            :app_name      => checkEnv('LEEROY_APP_NAME'),
 #            :aws_linux_ami => imageid,
 #            :aws_region    => ENV['AWS_REGION']
 #          }
 
-
           packer_params
-###
-#begin
-#  logger.debug "generating params for creating an EC2 image"
-
-#  image_params = Leeroy::Types::Mash.new
-
-  #image_params.phase = phase
-
-  # get instance_id from state or options
-
-
-  ##instance_id = state.instanceid? ? state.instanceid : options[:instance]
-  ##raise "Unable to determine instance ID, exiting." if instance_id.nil?
-  ##logger.debug "instance_id: #{instance_id}"
-  ##image_params.instance_id = instance_id
-
-  # generate image name based on state data
-  ##image_params.name = genImageName(phase, state)
-
-  ##image_params
-###
-
-
-
         rescue StandardError => e
           raise e
         end

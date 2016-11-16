@@ -123,10 +123,10 @@ module Leeroy
       c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
       c.flag [:p, :phase]
 
-      c.desc "Source AMI - Order of presence is state, CLI argument, then ENV[LEEROY_AWS_LINUX_AMI]"
+      c.desc "Source AMI sourced from CLI argument, then ENV[LEEROY_AWS_LINUX_AMI], and state"
       c.flag [:i, :imageid]
 
-      c.desc "LEEROY_APP_NAME"
+      c.desc "Name App / template directoy to build from, e.g LEEROY_APP_NAME=rk-bastion builds from template  \"repo/rk-bastion/main.json\""
       c.flag [:n, :name]
 
       #c.desc "LEEROY_PACKER_TEMPLATE_PREFIX"
