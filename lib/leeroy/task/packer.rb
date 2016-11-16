@@ -72,7 +72,7 @@ module Leeroy
           else
             imageid = options[:imageid]
           end
-          packer_params.imageid = imageid
+          packer_params.aws_linux_ami = imageid
 
           if self.state.app_name?
             app_name = self.state.app_name
@@ -81,6 +81,15 @@ module Leeroy
           else
             app_name = options[:name]
           end
+          packer_params.app_name = app_name
+
+          if self.state.aws_region?
+            aws_region = self.state.aws_region
+          else
+            aws_region = ENV['AWS_REGION']
+          end
+          packer_params.aws_region = aws_region
+
 
 #          packer_vars = {
 #            :app_name      => checkEnv('LEEROY_APP_NAME'),

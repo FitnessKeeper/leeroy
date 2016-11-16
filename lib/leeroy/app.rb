@@ -8,6 +8,7 @@ require 'leeroy/task/image'
 require 'leeroy/task/instantiate'
 require 'leeroy/task/terminate'
 require 'leeroy/task/sleep'
+require 'leeroy/task/packer'
 require 'leeroy/task/stub'
 require 'leeroy/types/fixture'
 require 'leeroy/types/phase'
@@ -131,9 +132,6 @@ module Leeroy
       #c.desc "LEEROY_PACKER_TEMPLATE_PREFIX"
       #c.flag []
 
-      c.desc "Image index (optional, will be calculated if not provided)."
-      c.flag [:x, :index]
-
       c.action do |global_options,options,args|
       # validate input
         unless options[:phase].nil? or valid_phase.include?(options[:phase])
@@ -149,6 +147,7 @@ module Leeroy
         #rescue NoMethodError => e
         #  help_now! "The argument for '--index' must be a positive integer."
         #end
+        #task = Leeroy::Task::Packer.new(global_options: global_options, options: options, args: args)
         task = Leeroy::Task::Packer.new(global_options: global_options, options: options, args: args)
         task.perform
       end
