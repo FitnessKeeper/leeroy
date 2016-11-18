@@ -28,7 +28,6 @@ module Leeroy
           logger.debug "phase: #{phase}"
           self.state.phase = phase
 
-          packer_vars = Leeroy::Types::Packer.new
           packer_params = _getPackerParams
           packer_vars = Leeroy::Types::Packer.new(packer_params)
 
