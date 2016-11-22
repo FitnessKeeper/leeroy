@@ -83,7 +83,7 @@ module Leeroy
           if self.state.aws_region?
             aws_region = self.state.aws_region
           else
-            aws_region = ENV['AWS_REGION']
+            aws_region = ENV['AWS_DEFAULT_REGION'] || ENV['AWS_REGION']
           end
           packer_params.aws_region = aws_region
 
