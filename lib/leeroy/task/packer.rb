@@ -31,6 +31,8 @@ module Leeroy
           packer_params = _getPackerParams
           packer_vars = Leeroy::Types::Packer.new(packer_params)
 
+          self.state.app_name = packer_vars.app_name
+
 
           cwd = File.join(checkEnv('LEEROY_PACKER_TEMPLATE_PREFIX'), checkEnv('LEEROY_APP_NAME'))
 
