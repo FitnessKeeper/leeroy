@@ -11,5 +11,7 @@ RUN mkdir -p /opt/leeroy
 WORKDIR /opt/leeroy
 COPY . /opt/leeroy
 RUN bundle install --without=development --deployment
+RUN leeroy env -d > .env
+VOLUME /data
 ENTRYPOINT ["leeroy"]
 CMD ["help"]
