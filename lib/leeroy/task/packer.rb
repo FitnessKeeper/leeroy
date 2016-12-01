@@ -16,7 +16,6 @@ module Leeroy
   module Task
     class Packer < Leeroy::Task::Base
       include Leeroy::Helpers::AWS
-      include Leeroy::Helpers::Inventory
       include Leeroy::Helpers::Packer
 
       def perform(args = self.args, options = self.options, global_options = self.global_options)

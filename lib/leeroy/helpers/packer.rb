@@ -11,6 +11,8 @@ module Leeroy
 
       attr :packer_client
 
+      # This lets us mix in the packer helper methods when we initialize
+      # Leeroy::Task::Packer
       def initialize(*args, &block)
         super(*args, &block)
 
