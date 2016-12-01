@@ -45,6 +45,7 @@ module Leeroy
         end
       end
 
+      # Validate templates - cwd changes working directory
       def validate(cwd, *args)
         begin
           Dir.chdir(cwd) do
@@ -60,7 +61,7 @@ module Leeroy
       end
 
 
-### Build
+      # Build - cwd changes working directory
       def buildPacker(cwd, vars = {})
         begin
           packer_ver = self.packer_client.version.version
