@@ -126,11 +126,8 @@ module Leeroy
       c.desc "Source AMI sourced from CLI argument, then ENV[LEEROY_AWS_LINUX_AMI], and state"
       c.flag [:i, :imageid]
 
-      c.desc "Name App / template directoy to build from, e.g LEEROY_APP_NAME=rk-bastion builds from template  \"repo/rk-bastion/main.json\""
+      c.desc "Name App / template directory to build from, e.g LEEROY_APP_NAME=rk-bastion builds from template  \"repo/rk-bastion/main.json\""
       c.flag [:n, :name]
-
-      #c.desc "LEEROY_PACKER_TEMPLATE_PREFIX"
-      #c.flag []
 
       c.action do |global_options,options,args|
       # validate input
@@ -138,16 +135,6 @@ module Leeroy
         help_now! "Valid arguments for '--phase' are: #{valid_phase.join(',')}."
         end
 
-        # index must be nil or must look like a positive integer
-        #begin
-        #  unless options[:index].nil? or options[:index].to_i > 0
-        #    help_now! "The argument for '--index' must be a positive integer."
-        #  end
-
-        #rescue NoMethodError => e
-        #  help_now! "The argument for '--index' must be a positive integer."
-        #end
-        #task = Leeroy::Task::Packer.new(global_options: global_options, options: options, args: args)
         task = Leeroy::Task::Packer.new(global_options: global_options, options: options, args: args)
         task.perform
       end

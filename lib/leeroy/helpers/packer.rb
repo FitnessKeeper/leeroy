@@ -1,5 +1,4 @@
 require 'aws-sdk'
-require 'base64'
 require 'packer'
 
 require 'leeroy/helpers'
@@ -22,6 +21,9 @@ module Leeroy
         logger.debug "Packer helpers initialized"
       end
 
+      # cwd in the below code inticates the command working directory
+      # which is used to change dir's into the directory where main.json is
+      # so that relitive paths used in the packer template expand correctly
       def validatePacker(cwd, vars = {})
         begin
           packer_ver = self.packer_client.version.version
@@ -69,7 +71,7 @@ module Leeroy
 
           logger.debug "Building Packer Template :'#{template}'"
 
-          build( cwd, template , vars )
+          build(cwd, template, vars)
 
         rescue RuntimeError => e
           logger.debug "Packer Build '#{template}' failed with message: #{e.message}"

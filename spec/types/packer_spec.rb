@@ -15,7 +15,7 @@ describe "Test Leeroy::Types::Packer New" do
   # Test that perform validates packer template syntax
 
   it "Check that ::Types::Packer initialized correctly" do
-    expect(@packer.packer_vars).to include(:aws_linux_ami, :app_name, :aws_region)
+    expect(@packer.packer_vars).to include(:aws_linux_ami, :app_name, :aws_region, :packer_template_prefix)
   end
   #{"packer_vars"=>[:aws_linux_ami, :app_name, :aws_region]}
 end

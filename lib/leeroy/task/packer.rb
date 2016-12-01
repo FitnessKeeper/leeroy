@@ -1,16 +1,15 @@
 require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
-require 'leeroy/helpers/inventory'
 require 'leeroy/helpers/packer'
 require 'leeroy/types/packer'
 
 # input
 # pass in path to packer template - ex rk-bastion/main.json
+# AWS_DEFAULT_REGION=us-east-1
+# LEEROY_AWS_LINUX_AMI=ami-b73b63a0
 # LEEROY_APP_NAME=rk-bastion
-# LEEROY_AWS_LINUX_AMI=ami-c481fad3
-# AWS_REGION=us-east-1
-
+# LEEROY_PACKER_TEMPLATE_PREFIX=/data/packer-rk-apps
 # Output region and AMI
 
 module Leeroy
@@ -26,15 +25,17 @@ module Leeroy
 
           phase = Leeroy::Types::Phase.resolve(self.state.fetch('phase'), options[:phase])
           logger.debug "phase: #{phase}"
+          # update phase in state
           self.state.phase = phase
 
           packer_params = _getPackerParams
           packer_vars = Leeroy::Types::Packer.new(packer_params)
 
+          # Sending app_name to state
           self.state.app_name = packer_vars.app_name
 
-
-          cwd = File.join(checkEnv('LEEROY_PACKER_TEMPLATE_PREFIX'), checkEnv('LEEROY_APP_NAME'))
+          # cwd is the fille filename where the packer template lives
+          cwd = File.join(packer_vars.packer_template_prefix, self.state.app_name)
 
           validation = validatePacker(cwd, { :vars => packer_vars })
 
@@ -62,7 +63,6 @@ module Leeroy
         begin
           logger.debug "generating Packer params to create an AMI"
           packer_params = Leeroy::Types::Mash.new
-          #packer_params.phase = phase
 
           if self.state.imageid?
             imageid = self.state.imageid
@@ -89,11 +89,15 @@ module Leeroy
           end
           packer_params.aws_region = aws_region
 
-#          packer_vars = {
-#            :app_name      => checkEnv('LEEROY_APP_NAME'),
-#            :aws_linux_ami => imageid,
-#            :aws_region    => ENV['AWS_REGION']
-#          }
+          # LEEROY_PACKER_TEMPLATE_PREFIX
+          if self.state.packer_template_prefix?
+            packer_template_prefix = self.state.packer_template_prefix
+          elsif options[:packer_template_prefix].nil?
+            packer_template_prefix = checkEnv('LEEROY_PACKER_TEMPLATE_PREFIX')
+          else
+            packer_template_prefix = options[:packer_template_prefix]
+          end
+          packer_params.packer_template_prefix = packer_template_prefix
 
           packer_params
         rescue StandardError => e
