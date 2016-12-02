@@ -8,6 +8,7 @@ require 'leeroy/task/image'
 require 'leeroy/task/instantiate'
 require 'leeroy/task/terminate'
 require 'leeroy/task/sleep'
+require 'leeroy/task/packer'
 require 'leeroy/task/stub'
 require 'leeroy/types/fixture'
 require 'leeroy/types/phase'
@@ -21,7 +22,7 @@ module Leeroy
     VALID_PHASE = Leeroy::Types::Phase.to_a.collect {|x| x.value}
     VALID_FIXTURE = Leeroy::Types::Fixture.to_a.collect {|x| x.value}
 
-    program_desc 'Automate tasks with Jenkins'
+    program_desc 'Automate tasks with Jenkins. When passing arguments, order is, CLI argument, then ENV[LEEROY_VAR]'
 
     # global options
     desc "Perform the requested task (pass '--no-op' for testing)."
@@ -114,6 +115,31 @@ module Leeroy
         task.perform
       end
     end
+##
+    desc "Creates an image from a Packer template."
+    command :packer do |c|
+
+      valid_phase = VALID_PHASE
+      c.desc "Phase of deploy process for which to deploy (must be one of #{valid_phase.sort})."
+      c.flag [:p, :phase]
+
+      c.desc "Source AMI sourced from CLI argument, then ENV[LEEROY_AWS_LINUX_AMI], and state"
+      c.flag [:i, :imageid]
+
+      c.desc "Name App / template directory to build from, e.g LEEROY_APP_NAME=rk-bastion builds from template  \"repo/rk-bastion/main.json\""
+      c.flag [:n, :name]
+
+      c.action do |global_options,options,args|
+      # validate input
+        unless options[:phase].nil? or valid_phase.include?(options[:phase])
+        help_now! "Valid arguments for '--phase' are: #{valid_phase.join(',')}."
+        end
+
+        task = Leeroy::Task::Packer.new(global_options: global_options, options: options, args: args)
+        task.perform
+      end
+    end
+##
 
     desc "Creates a fixture for a staging environment."
     command :fixture do |c|

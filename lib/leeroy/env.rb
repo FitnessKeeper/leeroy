@@ -41,6 +41,7 @@ module Leeroy
       'LEEROY_PROVISIONING_TEMPLATE_PREFIX' => '<path on local filesystem to directory containing provisioning templates>',
       'LEEROY_S3_BUCKET' => '<name of bucket used as datastore>',
       'LEEROY_USER_DATA_PREFIX' => '<path on local filesystem to directory containing user-data scripts>',
+      'LEEROY_PACKER_TEMPLATE_PREFIX' => '<path on local filesystem to directory containing packer templates. e.g. /home/user/packer-repo',
     }
 
     ENV_EXTRAS = {
