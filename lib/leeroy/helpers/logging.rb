@@ -21,7 +21,7 @@ module Leeroy
         Yell.new :syslog, name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :info, facility: :user
       elsif ENV['ENVIRONMENT'] == 'docker'
         # Do nothing
-        Yell.new :file, '/dev/null', name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :info, facility: :user
+        Yell.new :file, '/tmp/leeroy.log', name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :info, facility: :user
       else
         Yell.new :stderr, name: self.class.to_s, format: TRACE_FORMAT, trace: TRACE_LEVELS, level: :debug
       end
