@@ -1,4 +1,4 @@
-# leeroy [![Gem Version](https://badge.fury.io/rb/leeroy_app.svg)](https://badge.fury.io/rb/leeroy_app) [![Code Climate](https://codeclimate.com/github/FitnessKeeper/leeroy/badges/gpa.svg)](https://codeclimate.com/github/FitnessKeeper/leeroy) [![Build Status](https://travis-ci.org/FitnessKeeper/leeroy.svg?branch=master)](https://travis-ci.org/FitnessKeeper/leeroy.svg?branch=master)
+# leeroy [![Gem Version](https://badge.fury.io/rb/leeroy_app.svg)](https://badge.fury.io/rb/leeroy_app) [![Code Climate](https://codeclimate.com/github/FitnessKeeper/leeroy/badges/gpa.svg)](https://codeclimate.com/github/FitnessKeeper/leeroy) [![Build Status](https://travis-ci.org/FitnessKeeper/leeroy.svg?branch=master)](https://travis-ci.org/FitnessKeeper/leeroy.svg?branch=master) [![Docker Hub Automated Build](https://img.shields.io/docker/automated/fitnesskeeper/leeroy.svg)](https://hub.docker.com/r/fitnesskeeper/leeroy)
 
 o rly?  ya rly!
 
