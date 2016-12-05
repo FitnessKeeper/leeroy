@@ -1,7 +1,7 @@
 FROM ruby:2.1
 MAINTAINER Tim Hartmann <tim.hartmann@runkeeper.com>
 
-ENV ENVIRONMENT=production
+ENV ENVIRONMENT=docker
 RUN apt-get update
 RUN apt-get install cmake unzip libgit2-21 -y
 RUN mkdir -p /tmp/build && \
