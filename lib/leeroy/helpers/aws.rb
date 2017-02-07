@@ -1,5 +1,6 @@
 require 'aws-sdk'
 require 'base64'
+require 's3_uploader'
 
 require 'leeroy/helpers'
 require 'leeroy/helpers/env'
@@ -54,7 +55,47 @@ module Leeroy
           raise e
         end
       end
+  ## s3 uploader
+      def s3UploadDir(service, method, params = {}, global_options = self.global_options)
+        begin
+          logger.debug "constructing AWS request for '#{service}: #{method}'"
 
+          uploader = S3Uploader::Uploader.new({
+            :s3_key => YOUR_KEY,
+            :s3_secret => YOUR_SECRET_KEY,
+            :destination_dir => 'test/',
+            :region => 'eu-west-1',
+            :threads => 10
+          })
+
+          uploader.upload('/tmp/test', 'mybucket')
+
+
+#          client = self.send(service.to_sym)
+
+          params_mash = Leeroy::Types::Mash.new(params)
+          params = params_mash
+
+#          # dry_run is an ec2 thing
+#          case service.to_sym
+#          when :ec2
+#            dry_run = global_options[:op] ? false : true
+#
+#            params.dry_run = dry_run
+#          end
+
+
+#          resp = client.send(method.to_sym, params)
+
+          logger.debug "resp: #{resp.inspect}"
+
+          resp
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+# end s3uploader
       # EC2
 
       def ec2Request(method, params = {}, global_options = self.global_options)
