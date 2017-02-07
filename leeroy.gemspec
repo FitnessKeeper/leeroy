@@ -41,4 +41,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "yell", "~> 2.0"
   spec.add_runtime_dependency "yell-adapters-syslog", "~> 2.0"
   spec.add_runtime_dependency "packer-client", "~> 0.1.0"
+  spec.add_runtime_dependency "s3_uploader", "~> 0.2.3"
 end
