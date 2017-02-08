@@ -129,6 +129,8 @@ module Leeroy
       c.desc "Name App / template directory to build from, e.g LEEROY_APP_NAME=rk-bastion builds from template  \"repo/rk-bastion/main.json\""
       c.flag [:n, :name]
 
+      #packer_template_prefix / LEEROY_PACKER_TEMPLATE_PREFIX
+
       c.action do |global_options,options,args|
       # validate input
         unless options[:phase].nil? or valid_phase.include?(options[:phase])
@@ -161,6 +163,28 @@ module Leeroy
         task.perform
       end
     end
+  ##
+    desc "Deploy Static Assets to s3"
+    command :Static_assets do |c|
+
+      valid_fixture = VALID_FIXTURE
+      c.desc "Phase of deploy process for which to deploy (must be one of #{valid_fixture})."
+      c.flag [:f, :fixture], :must_match => valid_fixture
+
+      c.desc "Header template to be rendered before fixture template."
+      c.flag [:h, :header], :default_value => nil
+
+      c.action do |global_options,options,args|
+        # validate input
+        unless options[:fixture].nil? or valid_fixture.include?(options[:fixture])
+          help_now! "Valid arguments for '--fixture' are: #{valid_fixture.join(',')}."
+        end
+
+        task = Leeroy::Task::Static_assets.new(global_options: global_options, options: options, args: args)
+        task.perform
+      end
+    end
+  ##
 
     desc "Sleeps for some number of seconds."
     command :sleep do |c|

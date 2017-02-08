@@ -5,7 +5,7 @@ require 'leeroy/helpers/git'
 
 module Leeroy
   module Task
-    class Static_assets < Leeroy::Task::Base
+    class StaticAssets < Leeroy::Task::Base
       include Leeroy::Helpers::AWS
       include Leeroy::Helpers::Git
 
@@ -13,7 +13,7 @@ module Leeroy
         begin
           super(args, options, global_options)
 
-          # Does static assets really need state? 
+          # Does static assets really need state?
           phase = Leeroy::Types::Phase.resolve(self.state.fetch('phase'), options[:phase])
           logger.debug "phase: #{phase}"
           # update phase in state
@@ -53,53 +53,53 @@ module Leeroy
         end
       end
       private
-=begin
-      def _getPackerParams(state = self.state, env = self.env, options = self.options)
+      def _getStaticAssetParams(state = self.state, env = self.env, options = self.options)
         begin
-          logger.debug "generating Packer params to create an AMI"
-          packer_params = Leeroy::Types::Mash.new
+          logger.debug "generating StaticAsset params"
+          sa_params = Leeroy::Types::Mash.new
+          #static_asssets_path,
+          #static_asssets_s3_prefix
+          #static_asssets_s3_bucket
 
-          if self.state.imageid?
-            imageid = self.state.imageid
-          elsif options[:imageid].nil?
-            imageid = checkEnv('LEEROY_AWS_LINUX_AMI')
+          if self.state.static_asssets_path?
+            static_asssets_path = self.state.static_asssets_path
+          elsif options[:static_asssets_path].nil?
+            static_asssets_path = checkEnv('LEEROY_STATIC_ASSETS')
           else
-            imageid = options[:imageid]
+            static_asssets_path = options[:static_asssets_path]
           end
-          packer_params.aws_linux_ami = imageid
+          sa_params.static_asssets_path = static_asssets_path
 
-          if self.state.app_name?
-            app_name = self.state.app_name
-          elsif options[:name].nil?
-            app_name = checkEnv('LEEROY_APP_NAME')
+          if self.state.static_asssets_s3_bucket?
+            static_asssets_s3_bucket = self.state.static_asssets_s3_bucket
+          elsif options[:static_asssets_s3_bucket].nil?
+            static_asssets_s3_bucket = checkEnv('LEEROY_STATIC_ASSETS_S3_BUCKET')
           else
-            app_name = options[:name]
+            static_asssets_s3_bucket = options[:static_asssets_s3_bucket]
           end
-          packer_params.app_name = app_name
+          sa_params.static_asssets_s3_bucket = static_asssets_s3_bucket
+
+          if self.state.static_asssets_s3_prefix?
+            static_asssets_s3_prefix = self.state.static_asssets_s3_prefix
+          elsif options[:static_asssets_s3_prefix].nil?
+            static_asssets_s3_prefix = checkEnv('LEEROY_STATIC_ASSETS_S3_PREFIX')
+          else
+            static_asssets_s3_prefix = options[:static_asssets_s3_prefix]
+          end
+          sa_params.static_asssets_s3_prefix = static_asssets_s3_prefix
 
           if self.state.aws_region?
             aws_region = self.state.aws_region
           else
             aws_region = ENV['AWS_DEFAULT_REGION'] || ENV['AWS_REGION']
           end
-          packer_params.aws_region = aws_region
+          sa_params.aws_region = aws_region
 
-          # LEEROY_PACKER_TEMPLATE_PREFIX
-          if self.state.packer_template_prefix?
-            packer_template_prefix = self.state.packer_template_prefix
-          elsif options[:packer_template_prefix].nil?
-            packer_template_prefix = checkEnv('LEEROY_PACKER_TEMPLATE_PREFIX')
-          else
-            packer_template_prefix = options[:packer_template_prefix]
-          end
-          packer_params.packer_template_prefix = packer_template_prefix
-
-          packer_params
+          sa_params
         rescue StandardError => e
           raise e
         end
       end
-=end
     end
   end
 end

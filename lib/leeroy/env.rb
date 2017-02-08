@@ -42,6 +42,9 @@ module Leeroy
       'LEEROY_S3_BUCKET' => '<name of bucket used as datastore>',
       'LEEROY_USER_DATA_PREFIX' => '<path on local filesystem to directory containing user-data scripts>',
       'LEEROY_PACKER_TEMPLATE_PREFIX' => '<path on local filesystem to directory containing packer templates. e.g. /home/user/packer-repo',
+      'LEEROY_STATIC_ASSETS_S3_BUCKET' => 'S3 bucket to host static assets e.g "static1.runkeeper.com"',
+      'LEEROY_STATIC_ASSETS_S3_PREFIX' => 'Prefix in which to place the static assets e.g. "build"', 
+      'LEEROY_STATIC_ASSETS' => 'Path on local file system to git repo with static assets e.g. "/Users/jsmith/gitrepo"',
     }
 
     ENV_EXTRAS = {

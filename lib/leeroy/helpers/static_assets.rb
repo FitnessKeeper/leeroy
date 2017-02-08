@@ -7,7 +7,7 @@ require 'leeroy/helpers/env'
 
 module Leeroy
   module Helpers
-    module Static_assets
+    module StaticAssets
       include Leeroy::Helpers
 
       attr :packer_client
