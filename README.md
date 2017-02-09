@@ -68,10 +68,10 @@ FIXME not implemented yet
 
 LEEROY_STATIC_ASSETS_S3_BUCKET # S3 bucket to host static assets
 LEEROY_STATIC_ASSETS_S3_PREFIX # Prefix in which to place the static assets
-LEEROY_STATIC_ASSETS # Path on local file system to git repo with static static assets 
+LEEROY_STATIC_ASSETS # Path on local file system to git repo with static static assets
 
 require 'leeroy/task/static_assets'
-task = Leeroy::Task::Static_assets.new(options: { :phase => 'gold_master' })
+task = Leeroy::Task::StaticAssets.new(options: { :phase => 'gold_master' })
 
 
 repo.last_commit.oid

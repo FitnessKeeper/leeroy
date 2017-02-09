@@ -20,10 +20,10 @@ module Leeroy
           self.state.phase = phase
 
 
-           git_hash = getShortCommitHash
+          git_hash = getShortCommitHash
 
-#          packer_params = _getPackerParams
-#          packer_vars = Leeroy::Types::Packer.new(packer_params)
+          static_asset_params = _getStaticAssetParams
+          static_asset_vars = Leeroy::Types::StaticAssets.new(static_asset_params)
 
           # Sending app_name to state
 #          self.state.app_name = packer_vars.app_name

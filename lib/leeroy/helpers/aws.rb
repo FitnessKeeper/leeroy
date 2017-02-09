@@ -56,38 +56,40 @@ module Leeroy
         end
       end
   ## s3 uploader
-      def s3UploadDir(service, method, params = {}, global_options = self.global_options)
+      #def s3UploadDir(mybucket, source_dir, destination_dir)
+      def s3UploadDir()
         begin
-          logger.debug "constructing AWS request for '#{service}: #{method}'"
+          logger.debug "constructing AWS request to upload directory to S3"
+
+          creds = getCredentials
 
           uploader = S3Uploader::Uploader.new({
-            :s3_key => YOUR_KEY,
-            :s3_secret => YOUR_SECRET_KEY,
+            :s3_key => creds.access_key_id,
+            :s3_secret => creds.secret_access_key,
             :destination_dir => 'test/',
-            :region => 'eu-west-1',
+            :region => 'us-east-1',
             :threads => 10
           })
 
-          uploader.upload('/tmp/test', 'mybucket')
+          logger.debug "Uploading directory to S3"
+          uploader.upload('/tmp/test', 'rk-th-test')
 
+        rescue StandardError => e
+          raise e
+        end
+      end
+# end s3uploader
+      # get credentials out of the aws-sdk so they can be passed to 3rd
+      # party librarys
+      def getCredentials
+        begin
+          logger.debug "Getting AWS Credentials"
 
-#          client = self.send(service.to_sym)
+          client = Aws::SharedCredentials.new
+          resp = Leeroy::Types::Mash.new
 
-          params_mash = Leeroy::Types::Mash.new(params)
-          params = params_mash
-
-#          # dry_run is an ec2 thing
-#          case service.to_sym
-#          when :ec2
-#            dry_run = global_options[:op] ? false : true
-#
-#            params.dry_run = dry_run
-#          end
-
-
-#          resp = client.send(method.to_sym, params)
-
-          logger.debug "resp: #{resp.inspect}"
+          resp.access_key_id = client.credentials.access_key_id
+          resp.secret_access_key = client.credentials.secret_access_key
 
           resp
 
@@ -95,7 +97,9 @@ module Leeroy
           raise e
         end
       end
-# end s3uploader
+# end shared credentials
+
+
       # EC2
 
       def ec2Request(method, params = {}, global_options = self.global_options)
