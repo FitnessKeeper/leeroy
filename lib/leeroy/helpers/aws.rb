@@ -55,9 +55,9 @@ module Leeroy
           raise e
         end
       end
-  ## s3 uploader
-      #def s3UploadDir(mybucket, source_dir, destination_dir)
-      def s3UploadDir()
+
+  ## s3UploadDir - recursivly upload a directory to s3
+      def s3UploadDir(bucket='rk-th-test', src_dir='/tmp/test', dest_dir='test1/')
         begin
           logger.debug "constructing AWS request to upload directory to S3"
 
@@ -66,19 +66,23 @@ module Leeroy
           uploader = S3Uploader::Uploader.new({
             :s3_key => creds.access_key_id,
             :s3_secret => creds.secret_access_key,
-            :destination_dir => 'test/',
+            :destination_dir => dest_dir,
             :region => 'us-east-1',
-            :threads => 10
+            :threads => 10,
+            :logger => self.logger
+            #:logger => Logger.new('/dev/null')
           })
 
           logger.debug "Uploading directory to S3"
-          uploader.upload('/tmp/test', 'rk-th-test')
+          uploader.upload(src_dir, bucket)
+          logger.debug "Upload to directory complete"
 
         rescue StandardError => e
           raise e
         end
       end
-# end s3uploader
+      #end s3UploadDir
+
       # get credentials out of the aws-sdk so they can be passed to 3rd
       # party librarys
       def getCredentials
@@ -97,7 +101,7 @@ module Leeroy
           raise e
         end
       end
-# end shared credentials
+      # end getCredentials
 
 
       # EC2
