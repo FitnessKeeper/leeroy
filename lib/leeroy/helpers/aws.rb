@@ -58,7 +58,7 @@ module Leeroy
 
   ## s3UploadDir - recursivly upload a directory to s3
   #    def s3UploadDir(bucket='rk-th-test', src_dir='/tmp/test', dest_dir='test1/')
-      def s3UploadDir(bucket, src_dir='/tmp/test', dest_dir)
+      def s3UploadDir(bucket, src_dir, dest_dir)
         begin
           logger.debug "constructing AWS request to upload directory to S3"
 
@@ -103,6 +103,30 @@ module Leeroy
         end
       end
       # end getCredentials
+
+      ## check if s3 object exists
+      # s3.list_objects_v2({ :bucket => 'rk-th-test', :prefix => 'test2'})
+      def obectsExists?(bucket, prefix)
+        begin
+          run_params = Leeroy::Types::Mash.new
+          run_params.bucket = bucket
+          run_params.prefix = prefix
+
+          # is the object present in S3?
+          logger.debug "checking for presence of #{run_params.prefix}"
+          resp = s3Request(:list_objects_v2, run_params)
+
+          if resp.key_count > 0
+            return true
+          else
+            return false
+          end
+
+        rescue StandardError => e
+          raise e
+        end
+      end
+      ## end
 
 
       # EC2

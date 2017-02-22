@@ -28,7 +28,7 @@ module Leeroy
 
           dest_dir = File.join(dest_prefix, git_hash)
 
-          s3UploadDir(dest_bucket, src_dir='/tmp/test', dest_dir)
+          s3UploadDir(dest_bucket, pwd, dest_dir)
 
           # Sending app_name to state
 #          self.state.app_name = packer_vars.app_name
