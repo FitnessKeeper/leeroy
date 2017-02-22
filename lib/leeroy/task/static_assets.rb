@@ -28,25 +28,11 @@ module Leeroy
 
           dest_dir = File.join(dest_prefix, git_hash)
 
+          if obectsExists?(dest_bucket, dest_dir)
+            logger.debug "Destination #{dest_bucket}/#{dest_dir} already exists"
+          end
+
           s3UploadDir(dest_bucket, pwd, dest_dir)
-
-          # Sending app_name to state
-#          self.state.app_name = packer_vars.app_name
-
-          # cwd is the fille filename where the packer template lives
-#          cwd = File.join(packer_vars.packer_template_prefix, self.state.app_name)
-
-#          validation = validatePacker(cwd, { :vars => packer_vars })
-
-#          build = buildPacker(cwd,{ :vars => packer_vars } )
-#          build.artifacts.each do | item |
-#            self.state.message = item.string
-#            artifact = item.id.split(':')
-#            self.state.imageid = artifact[1]
-#          end
-
-          #logger.debug "#{build.stdout}"
-#          logger.debug "Packer Artifact Created : #{state.imageid}"
 
           dump_state
 
@@ -57,14 +43,13 @@ module Leeroy
           raise e
         end
       end
+
       private
+
       def _getStaticAssetParams(state = self.state, env = self.env, options = self.options)
         begin
           logger.debug "generating StaticAsset params"
           sa_params = Leeroy::Types::Mash.new
-          #static_asssets_path,
-          #static_asssets_s3_prefix
-          #static_asssets_s3_bucket
 
           if self.state.static_asssets_path?
             static_asssets_path = self.state.static_asssets_path
