@@ -2,6 +2,7 @@ require 'leeroy'
 require 'leeroy/task'
 require 'leeroy/helpers/aws'
 require 'leeroy/helpers/git'
+require 'leeroy/types/static_assets'
 
 module Leeroy
   module Task
@@ -13,17 +14,21 @@ module Leeroy
         begin
           super(args, options, global_options)
 
-          # Does static assets really need state?
-          phase = Leeroy::Types::Phase.resolve(self.state.fetch('phase'), options[:phase])
-          logger.debug "phase: #{phase}"
-          # update phase in state
-          self.state.phase = phase
-
-
-          git_hash = getShortCommitHash
-
           static_asset_params = _getStaticAssetParams
           static_asset_vars = Leeroy::Types::StaticAssets.new(static_asset_params)
+
+          logger.debug "#{static_asset_vars}"
+
+          aws_region  = static_asset_vars.aws_region
+          pwd         = static_asset_vars.static_asssets_path
+          dest_bucket = static_asset_vars.static_asssets_s3_bucket
+          dest_prefix = static_asset_vars.static_asssets_s3_prefix
+
+          git_hash = getShortCommitHash(pwd)
+
+          dest_dir = File.join(dest_prefix, git_hash)
+
+          s3UploadDir(dest_bucket, src_dir='/tmp/test', dest_dir)
 
           # Sending app_name to state
 #          self.state.app_name = packer_vars.app_name
@@ -41,7 +46,7 @@ module Leeroy
 #          end
 
           #logger.debug "#{build.stdout}"
-          logger.debug "Packer Artifact Created : #{state.imageid}"
+#          logger.debug "Packer Artifact Created : #{state.imageid}"
 
           dump_state
 

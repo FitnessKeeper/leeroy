@@ -57,7 +57,8 @@ module Leeroy
       end
 
   ## s3UploadDir - recursivly upload a directory to s3
-      def s3UploadDir(bucket='rk-th-test', src_dir='/tmp/test', dest_dir='test1/')
+  #    def s3UploadDir(bucket='rk-th-test', src_dir='/tmp/test', dest_dir='test1/')
+      def s3UploadDir(bucket, src_dir='/tmp/test', dest_dir)
         begin
           logger.debug "constructing AWS request to upload directory to S3"
 

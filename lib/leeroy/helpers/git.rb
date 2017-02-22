@@ -17,14 +17,12 @@ module Leeroy
       end
       #        dirname = File.basename(Dir.getwd)
       #        @repo = Rugged::Repository.new('path/to/my/repository')
-      def getShortCommitHash(pwd='/Users/alaric/git/leeroy')
+      def getShortCommitHash(pwd='.')
         begin
-          repo = Rugged::Repository.new(pwd)
-          logger.debug "Loaded Git Repo:'#{pwd}'"
-          commit_hash = repo.last_commit.oid
+
+          commit_hash = getCommitHash(pwd)
           short_hash = commit_hash[0..6]
 
-          logger.debug "Long Git Hash : #{commit_hash}'"
           logger.debug "Short Git Hash : #{commit_hash[0..6]}'"
 
           short_hash
@@ -37,11 +35,25 @@ module Leeroy
         end
       end
 
-##
-      # cwd in the below code inticates the command working directory
-      # which is used to change dir's into the directory where main.json is
-      # so that relitive paths used in the packer template expand correctly
-###
+      def getCommitHash(cwd='.')
+        begin
+          Dir.chdir(cwd) do
+            repo = Rugged::Repository.new(cwd)
+            logger.debug "Loaded Git Repo:'#{cwd}'"
+            commit_hash = repo.last_commit.oid
+
+            logger.debug "Git Commit Hash : #{commit_hash}'"
+
+            commit_hash
+          end
+
+        rescue RuntimeError => e
+          logger.debug "failed with message: #{e.message}"
+          raise e
+        rescue StandardError => e
+          raise e
+        end
+      end
     end
   end
 end
