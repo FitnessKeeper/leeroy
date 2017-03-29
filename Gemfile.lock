@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    leeroy_app (0.5.1)
+    leeroy_app (0.5.2)
       awesome_print (~> 1.6)
       aws-sdk (~> 2)
       chronic (~> 0.10)
