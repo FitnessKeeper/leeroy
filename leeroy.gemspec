@@ -6,8 +6,8 @@ require 'leeroy/version'
 Gem::Specification.new do |spec|
   spec.name          = "leeroy_app"
   spec.version       = Leeroy::VERSION
-  spec.authors       = ["Steve Huff"]
-  spec.email         = ["steve.huff@runkeeper.com"]
+  spec.authors       = ["Steve Huff", "Tim Hartmann"]
+  spec.email         = ["steve.huff@runkeeper.com", "tim.hartmann@runkeeper.com"]
   spec.summary       = %q{Automate tasks with Jenkins}
   spec.description   = %q{Leeroy is a framework and CLI app that captures common features required at various points in a CI pipeline.  It is designed to be invoked interactively or from Jenkins scripts.}
   spec.homepage      = "https://github.com/FitnessKeeper/leeroy"
