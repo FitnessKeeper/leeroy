@@ -15,6 +15,7 @@ module Leeroy
 
       property :message, coerce: String
       property :app_name, coerce: String
+      property :branch, coerce: String
       property :instanceid, coerce: String
       property :imageid, coerce: String
       property :phase, coerce: lambda {|x| Leeroy::Types::Phase.from_s(x.to_s)}
@@ -28,6 +29,7 @@ module Leeroy
 
         self.dump_properties = [
           :app_name,
+          :branch,
           :imageid,
           :instanceid,
           :message,

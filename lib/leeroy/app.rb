@@ -151,6 +151,9 @@ module Leeroy
       c.desc "Header template to be rendered before fixture template."
       c.flag [:h, :header], :default_value => nil
 
+      c.desc "Git branch sourced from ENV[LEEROY_BRANCH] if not provided"
+      c.flag [:b, :branch], :default_value => nil
+
       c.action do |global_options,options,args|
         # validate input
         unless options[:fixture].nil? or valid_fixture.include?(options[:fixture])

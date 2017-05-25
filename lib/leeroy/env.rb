@@ -27,6 +27,7 @@ module Leeroy
     ENV_DEFAULTS = {
       'LEEROY_APP_NAME' => '<identifying string, e.g. "tomcat7">',
       'LEEROY_AWS_LINUX_AMI' => '<AMI ID to be used as base for gold master>',
+      'LEEROY_BRANCH' => '<git branch>',
       'LEEROY_BUILD_INSTANCE_TYPE' => '<EC2 instance type to be used for imaging>',
       'LEEROY_BUILD_PROFILE_NAME' => '<IAM instance profile name to be applied to imaging instances>',
       'LEEROY_BUILD_SECURITY_GROUP' => '<VPC security group name to be applied to imaging instances>',
