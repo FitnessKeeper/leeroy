@@ -111,6 +111,9 @@ module Leeroy
           # is this a dry run or the real thing?
           dry_run = global_options[:op] ? false : true
 
+          branch = state.branch
+
+
 
         rescue StandardError => e
           raise e
