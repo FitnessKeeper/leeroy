@@ -76,7 +76,7 @@ GEM
     pry-awesome_print (9.6.11)
       awesome_print (>= 1.1.0, < 999)
       pry (>= 0.9.0, < 999)
-    rake (10.5.0)
+    rake (13.0.1)
     rspec (3.5.0)
       rspec-core (~> 3.5.0)
       rspec-expectations (~> 3.5.0)
@@ -108,7 +108,7 @@ DEPENDENCIES
   leeroy_app!
   pry (~> 0.10)
   pry-awesome_print (~> 9.6)
-  rake (~> 10.0)
+  rake (~> 13.0)
   rspec (~> 3.3)
 
 BUNDLED WITH
